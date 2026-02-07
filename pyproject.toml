@@ -1,0 +1,22 @@
+[build-system]
+requires = ["uv_build~=0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "far_science"
+
+[project]
+name = "havsalt-far-science"
+version = "0.1.0.dev1"
+description = "A mysterious text adventure, taking place on a space station"
+authors = [
+    { name = "Havsalt", email = "77575424+Havsalt@users.noreply.github.com" }
+]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE.md"]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+far-science = "far_science:main"

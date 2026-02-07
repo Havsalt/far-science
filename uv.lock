@@ -1,0 +1,8 @@
+version = 1
+revision = 3
+requires-python = ">=3.13"
+
+[[package]]
+name = "havsalt-far-science"
+version = "0.1.0.dev1"
+source = { editable = "." }
