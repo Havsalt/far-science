@@ -1,3 +1,3 @@
 # Text Adventure
 
-Text adventure game
+A mysterious text adventure, taking place on a space station.
