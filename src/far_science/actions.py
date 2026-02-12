@@ -150,7 +150,8 @@ def say_hello(_: World) -> None:
 
 @action(
     CompartmentName.AI_GUIDANCE_CENTER,
-    lambda w, _: not w.player.station.state.asked_ai_for_help,
+    lambda w, _: w.player.station.state.has_power
+    and not w.player.station.state.asked_ai_for_help,
     "The AI might help me if I ask it",
 )
 def ask_for_help(w: World) -> None:

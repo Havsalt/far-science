@@ -1,5 +1,4 @@
 import time
-from enum import StrEnum, auto
 from dataclasses import dataclass
 
 from . import (
@@ -48,7 +47,7 @@ world = World(
                     Quest(
                         lambda w: w.player.compartment.is_discovered,
                         [
-                            f"There are s(gns of {hint.clue('tampering')} with the {hint.wet('cryo-pod')}.",
+                            f"There are s?gns of {hint.clue('tampering')} with the {hint.wet('cryo-pod')}.",
                             ...,
                             hint.weak("Who could have done this?"),
                             ...,
@@ -100,7 +99,19 @@ world = World(
                     ),
                     Quest(
                         lambda w: w.player.station.state.asked_ai_for_help,
-                        [...],
+                        [
+                            "Well,",
+                            "there are nobody here...",
+                            ...,
+                            f"... and who even is this {hint.weak('Snidri')}!",
+                            ...,
+                            ...,
+                            f"For all I know, {hint.weak('"the crew"')} might not even be real,",
+                            hint.weak("perhaps only imaginative friends?"),
+                            ...,
+                            "... but people of the imagination does certainly not",
+                            f"leave {hint.clue('notes')} like {hint.weak('these')} scattered around.",
+                        ],
                     ),
                 ),
                 Compartment(
@@ -132,7 +143,7 @@ world = World(
                         lambda w: w.player.station.state.asked_ai_for_help,
                         [
                             "AI: You got work to do,",
-                            f"    wh/ch seems to be aproximatly {hint.info('5 science')} reports",
+                            f"    wh^ch seems to be aproxim#tly {hint.info('5 science')} reports",
                         ],
                         lambda w: w.player.station.state.science >= 5,
                         [
@@ -147,7 +158,7 @@ world = World(
                             "    since nobody else is as c$pable as you in the lab.",
                             ...,
                             ...,
-                            f"AI: Check if {hint.clue("Snidri")} is done with his {hint.sprout('project')}"
+                            f"AI: Check if {hint.clue('Snidri')} is done with his {hint.sprout('project')}"
                             + f" in the {hint.label(CompartmentName.MEDICAL_BAY)}.",
                             "    He is long over schedule... *bzZt*",
                         ],
