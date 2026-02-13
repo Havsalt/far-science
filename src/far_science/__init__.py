@@ -98,7 +98,8 @@ world = World(
                         ],
                     ),
                     Quest(
-                        lambda w: w.player.station.state.asked_ai_for_help,
+                        lambda w: w.player.station.state.asked_ai_for_help
+                        and w.player.station.state.science >= 5,
                         [
                             "Well,",
                             "there are nobody here...",
