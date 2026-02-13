@@ -143,11 +143,6 @@ def blow_up(w: World) -> None:
     exit()
 
 
-@action(CompartmentName.AI_GUIDANCE_CENTER, lambda _, c: c.is_discovered)
-def say_hello(_: World) -> None:
-    print("HELLO WORLD!")
-
-
 @action(
     CompartmentName.AI_GUIDANCE_CENTER,
     lambda w, c: c.is_discovered
