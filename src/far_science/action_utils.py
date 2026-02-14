@@ -30,6 +30,7 @@ class ConditionalAction:
 all_actions: Final = dict[Place, dict[str, ConditionalAction]]()
 
 
+@final
 class Sentinel(type):
     __new__: None
 
