@@ -4,16 +4,17 @@ from functools import wraps
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Callable, Generator, Literal, Final, final
 
-from .station import Compartment, CompartmentName
+from .station import CompartmentName
+from .context import Context
 
 if TYPE_CHECKING:
-    from . import World
+    from .world_gen import World
 
 type ActionClassName = str
 type ActionNameSegments = list[str]
 # Individual actions are defined as public methods
-type Action = Callable[[World], None]
-type Condition = Callable[[World, Compartment], bool]
+type Action = Callable[[Context], None]
+type Condition = Callable[[Context], bool]
 type Place = CompartmentName | type[anywhere]
 
 
@@ -40,38 +41,41 @@ class Sentinel(type):
 class anywhere(metaclass=Sentinel): ...
 
 
-def always(_: World, __: Compartment) -> Literal[True]:
+def always(_: Context) -> Literal[True]:
     return True
 
 
 def action(
-    place: Place,
-    condition: Condition,
+    where: Place,
+    when: Condition,
     /,
-    desc: str | None = None,
+    description: str | None = None,
     *,
     alias: list[str] | None = None,
 ):
     def decorator(fn: Action):
-        if place not in all_actions:
-            all_actions[place] = {}
+        if where not in all_actions:
+            all_actions[where] = {}
         if alias is not None:
             action_name_segments = alias
         else:
             action_name_segments = fn.__name__.split("_")
 
-        if desc is not None:
-            final_desc = desc
+        if description is not None:
+            final_desc = description
         else:
             final_desc = fn.__name__.replace("_", " ").capitalize()
 
-        all_actions[place][fn.__name__] = ConditionalAction(
-            fn, condition, action_name_segments, final_desc
+        all_actions[where][fn.__name__] = ConditionalAction(
+            fn,
+            when,
+            action_name_segments,
+            final_desc,
         )
 
         @wraps(fn)
-        def wrapper(world: World) -> None:
-            fn(world)
+        def wrapper(ctx: Context) -> None:
+            fn(ctx)
 
         return wrapper
 
@@ -85,7 +89,7 @@ def get_available_actions(
     place_actions = all_actions.get(compartment.name, dict())
     anywhere_actions = all_actions.get(anywhere, dict())
     possible_actions = place_actions | anywhere_actions
-
+    ctx = Context(world)
     for action in possible_actions.values():
-        if action.condition(world, compartment):
+        if action.condition(ctx):
             yield action
