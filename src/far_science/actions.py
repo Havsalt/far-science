@@ -100,26 +100,25 @@ def sleep(ctx: Context) -> None:
     match ctx.player.virus_stage:
         case VirusSeverity.Dormant():
             print_message(
-                "I like the smell of fresh cryo-bed.",
+                "Quite a comfy cryo-bed.",
                 "Feeling rested :)",
             )
         case VirusSeverity.Growing(percent=percent):
             if percent < 15:
                 print_message(
-                    "I like the smell of fresh cryo-bed.",
+                    "Quite a comfy cryo-bed.",
                     "Feeling rested :|",
                 )
             elif percent < 30:
                 print_message(
-                    "Ready for a new day,"
-                    "but somewhat tired",
+                    "Ready for a new day,but somewhat tired",
                     ...,
                     "... and very thirsty",
                 )
             elif percent < 40:
                 print_message(
                     "Woke up,"
-                    f"and found a new {hint.sprout("thorn")} sticking out of my hand!",
+                    f"and found a new {hint.sprout('thorn')} sticking out of my hand!",
                 )
             elif percent < 75:
                 print_message(
@@ -128,12 +127,12 @@ def sleep(ctx: Context) -> None:
                     "uaaAAA!!",
                     "It hurts in my chest!",
                     ...,
-                    "I'm turning green..."
+                    "I'm turning green...",
                 )
             else:
                 print_message(
                     "I can't stand this pain anymore!",
-                    "Waking up was a mistake..."
+                    "Waking up was a mistake...",
                 )
         case _:
             assert_never(ctx.player.virus_stage)
