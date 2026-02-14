@@ -6,6 +6,7 @@ from .dialogue import Message
 from .context import Context
 
 type Condition = Callable[[Context], bool]
+type PostEvent = Callable[[Context], None]
 
 
 # NOTE: Will only trigger when in compartment the quest is attached to
@@ -17,12 +18,16 @@ class Quest:
         end_condition: Condition | None = None,  # Using lambda
         end_message: Message | None = None,
         /,
+        *,
+        post_event: PostEvent | None = None,  # Using lambda
     ) -> None:
         self._start_condition = start_condition  # Use as method-like
         self._end_condition = end_condition
         self.start_message = start_message
         self.end_message = end_message
         self.is_active = False
+        # Triggered after completing a quest - Called from outside the instance
+        self.post_event = post_event
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.is_active=}, {self.start_message}, {self.end_message})"

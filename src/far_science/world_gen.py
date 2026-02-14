@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Final
 
-from . import hint
+from . import hint, post_events
 from .player import Player
 from .station import SpaceStation, StationName, Compartment, CompartmentName
 from .action_utils import always
@@ -96,7 +96,7 @@ world: Final = World(
                     ),
                     Quest(
                         lambda ctx: ctx.state.asked_ai_for_help
-                        and ctx.state.science >= 5,
+                        and ctx.state.completed_initial_reports_for_ai,
                         [
                             "Well,",
                             "there are nobody here...",
@@ -160,6 +160,7 @@ world: Final = World(
                             + f" in the {hint.label(CompartmentName.MEDICAL_BAY)}.",
                             "    He is long over schedule... *bzZt*",
                         ],
+                        post_event=post_events.complete_initial_reports_for_ai,
                     ),
                 ),
                 Compartment(

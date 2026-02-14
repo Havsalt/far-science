@@ -41,6 +41,7 @@ class StationState:
     science: int = 0
     has_power: bool = False
     asked_ai_for_help: bool = False
+    completed_initial_reports_for_ai: bool = False
 
 
 @dataclass

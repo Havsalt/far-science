@@ -29,10 +29,9 @@ def main():
         + f"(type '{hint.info('help')}' for list of actions)",
     )
     print_message(start_message, step_time=1.5)
+    ctx = Context(world)
 
     while True:
-        # Always use new and updated context namespace for each cycle/half-cycle
-        ctx = Context(world)
         print()
         if world.player.compartment.quest_stage < world.player.compartment.quest_count:
             # Start quest
@@ -47,7 +46,7 @@ def main():
                     time.sleep(1)
                 continue  # Idk tbh...
 
-            # End quest - May be instantly after starting - An imidiate quest
+            # End quest - May be instantly after started - An imidiate quest
             if (
                 world.player.compartment.current_quest.is_active
                 and world.player.compartment.current_quest.is_completed(ctx)
@@ -56,6 +55,8 @@ def main():
                     time.sleep(1)
                     print_message(*world.player.compartment.current_quest.end_message)
                     time.sleep(1)
+                if world.player.compartment.current_quest.post_event is not None:
+                    world.player.compartment.current_quest.post_event(ctx)
                 world.player.compartment.quest_stage += 1
                 continue  # May trigger new quest
 
