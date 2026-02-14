@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import wraps
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Generator, Literal, Final, final
+from typing import TYPE_CHECKING, Callable, Generator, Literal, Final, final, override
 
 from .station import CompartmentName
 from .context import Context
@@ -31,7 +31,7 @@ all_actions: Final = dict[Place, dict[str, ConditionalAction]]()
 
 
 class Sentinel(type):
-    __new__: None
+    __new__: None = None
 
     def __repr__(cls) -> str:
         return f"<{__class__.__name__}(<{cls.__name__}>)>"
