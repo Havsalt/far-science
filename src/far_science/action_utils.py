@@ -30,14 +30,8 @@ class ConditionalAction:
 all_actions: Final = dict[Place, dict[str, ConditionalAction]]()
 
 
-@final
-class NonInstantiableSentinel:
-    __new__: None = None
-
-
 class Sentinel(type):
-    def __new__(cls, *_args: Any, **_kwargs: Any) -> type[NonInstantiableSentinel]:
-        return NonInstantiableSentinel
+    __new__: None
 
     def __repr__(cls) -> str:
         return f"<{__class__.__name__}(<{cls.__name__}>)>"
