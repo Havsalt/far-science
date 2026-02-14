@@ -1,7 +1,7 @@
 from .context import Context
 
 
-# These functions are just a function that mutates the context,
+# These functions are just for mutating the global context,
 # since `lambda` does not allow assignments
 
 
