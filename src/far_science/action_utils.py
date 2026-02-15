@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import wraps
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Generator, Literal, Any, Final, final
+from typing import TYPE_CHECKING, Callable, Generator, Literal, Final, final
 
 from .station import CompartmentName
 from .context import Context
