@@ -19,4 +19,4 @@ requires-python = ">=3.13"
 dependencies = []
 
 [project.scripts]
-play-far-science = "far_science:main"
+far-science = "far_science:main"
