@@ -13,7 +13,6 @@ type ActionClassName = str
 # Individual actions are defined as public methods
 type Action = Callable[[Context], None]
 type UnavailableAction = Callable[[Context], Reason]
-type SkipAction = Callable[[Context], None]  # TODO: Implement
 type Condition = Callable[[Context], bool]
 type Place = type[anywhere] | CompartmentName
 
@@ -25,7 +24,6 @@ class ConditionalAction:
     name_segments: ActionNameSegments
     description: str
     when_unavailable: UnavailableAction | None = None
-    skip_if: Condition | None = None
 
 
 all_compartment_actions: Final = dict[Place, dict[str, ConditionalAction]]()
@@ -50,7 +48,6 @@ def action(
     description: str | None = None,
     *,
     when_unavailable: UnavailableAction | None = None,
-    skip_if: Condition | None = None,
     alias: list[str] | None = None,
 ):
     def decorator(fn: Action):
@@ -71,7 +68,6 @@ def action(
             condition_met=when,
             name_segments=action_name_segments,
             description=final_description,
-            skip_if=skip_if,
             when_unavailable=when_unavailable,
         )
 
