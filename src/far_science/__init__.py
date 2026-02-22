@@ -2,8 +2,8 @@ from . import (
     hint,
     actions as _,  # NOTE: Needed to load actions
 )
-from .action_utils import get_available_actions
-from .dialogue import print_message, get_input_segments, pause
+from .action_utils import get_available_actions, get_action_by_name
+from .dialogue import TEXT_LINE_TYPES, print_message, get_input_segments, pause
 from .context import Context
 from .world_gen import world
 
@@ -63,12 +63,21 @@ def main():
 
         # Perform a valid action
         segments = get_input_segments()
-        for action in get_available_actions(world):
-            if segments == action.trigger:
-                action.fn(ctx)
+        for action in get_available_actions(ctx):
+            if segments == action.name_segments:
+                action.perform(ctx)
                 break
         else:  # nobreak
-            print(hint.error("Invalid action"))
+            if action := get_action_by_name(segments):
+                if action.when_unavailable:
+                    reason = action.when_unavailable(ctx) or hint.error(
+                        "Unavailable action"
+                    )
+                else:
+                    reason = hint.error("Unavailable action")
+            else:
+                reason = hint.error("Invalid action")
+            print_message(reason)
             continue
 
         # At the end here, count as 1 cycle/move

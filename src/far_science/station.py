@@ -6,8 +6,8 @@ from enum import StrEnum, auto
 from dataclasses import dataclass, field
 from typing import Literal
 
+from . import bacteria
 from .traits import HasName
-from .player import Syringe
 from .questing import Quest
 
 
@@ -43,7 +43,7 @@ class StationState:
     asked_ai_for_help: bool = False
     completed_initial_reports_for_ai: bool = False
     inspected_soil: bool = False
-    syringe: Syringe | None = None
+    syringe: bacteria.Syringe | None = None
     has_picked_up_syringe: bool = False
 
 

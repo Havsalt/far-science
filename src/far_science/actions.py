@@ -3,12 +3,11 @@ from __future__ import annotations
 import random
 from typing import assert_never
 
-from . import hint, science
-from .station import CompartmentName, Syringe
-from .dialogue import print_message
+from . import hint, science, bacteria
+from .station import CompartmentName
+from .dialogue import print_message, TextLine, Message
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
-from .player import VirusStage, VIRUS_GROWING_RATE, SYRINGE_EFFECT
 
 
 @action(anywhere, always, "Read the help manual", alias=["help"])
@@ -34,10 +33,10 @@ def read_help(_: Context) -> None:
 
 @action(anywhere, always, "Think about what I can do", alias=["wcid"])
 def what_can_i_do(ctx: Context) -> None:
-    for action in get_available_actions(ctx.world):
-        if action.condition(ctx):
+    for action in get_available_actions(ctx):
+        if action.condition_met(ctx):
             print(
-                f"{hint.info(action.desc)}:\n- {hint.label(' '.join(action.trigger))}"
+                f"{hint.info(action.description)}:\n- {hint.label(' '.join(action.name_segments))}"
             )
 
 
@@ -53,11 +52,24 @@ def where_am_i(ctx: Context) -> None:
     )
 
 
+def blocked_message(_: Context) -> TextLine | Message:
+    if random.randint(0, 1):
+        return "Nowhere to go..."
+    elif random.randint(0, 3):
+        return "Dead end..."
+    else:
+        return (
+            "Can't go through walls...",
+            "Sometimes I wish thou",
+        )
+
+
 @action(
     anywhere,
     lambda ctx: ctx.compartment.next_compartment is not None,
     "Move forward to the next compartment I find",
     alias=["mf"],
+    when_unavailable=lambda _: "Could",
 )
 def move_forward(ctx: Context) -> None:
     assert ctx.compartment.next_compartment is not None
@@ -102,13 +114,13 @@ def check_action_points(ctx: Context) -> None:
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
-    if ctx.player.virus_stage is VirusStage.Dormant:
+    if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
         print_message(
             "Quite a comfy cryo-bed.",
             "Feeling rested :)",
         )
     else:
-        ctx.player.virus_stage.percent += VIRUS_GROWING_RATE
+        ctx.player.virus_stage.percent += bacteria.VIRUS_GROWING_RATE
         if ctx.player.virus_stage.percent < 15:
             print_message(
                 "Quite a comfy cryo-bed.",
@@ -200,7 +212,7 @@ def turn_on_reactor(ctx: Context) -> None:
         print_message(hint.weak("-1 action point"))
     else:
         print_message(hint.weak("You barley had enough strength to push the button"))
-    ctx.player.virus_stage = VirusStage.Growing(percent=0)
+    ctx.player.virus_stage = bacteria.VirusStage.Growing(percent=0)
 
 
 @action(CompartmentName.NUCLEAR_REACTOR, always, "Cause critical reactor overload")
@@ -211,8 +223,7 @@ def blow_up(_: Context) -> None:
         "Nope.",
         "You just experinced the inside of a uranium core...",
         ...,
-        ...,
-        hint.error("Dead."),
+        hint.error("Scattered across the universe"),
         step_delta=1,
     )
     exit()
@@ -243,7 +254,7 @@ def ask_for_help(ctx: Context) -> None:
 )
 def pick_up_unknown_syringe(ctx: Context) -> None:
     ctx.state.has_picked_up_syringe = True  # To prevent future pickups - Onetime action
-    ctx.state.syringe = Syringe.UNKNOWN_CONTENT
+    ctx.state.syringe = bacteria.Syringe.UNKNOWN_CONTENT
     print_message(
         hint.weak("There is a syringe of unknown content on one of the desks."),
         hint.weak("You take it, and look at it."),
@@ -267,13 +278,13 @@ def inject_syringe(ctx: Context) -> None:
         "Mismatch with trigger condition and execution"
     )
     match ctx.state.syringe:
-        case Syringe.UNKNOWN_CONTENT:
+        case bacteria.Syringe.UNKNOWN_CONTENT:
             print_message(
                 "Time to find out what this does...",
                 ...,
                 hint.weak("Injecting syringe"),
             )
-            if ctx.player.virus_stage is VirusStage.Dormant:
+            if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
                 print_message(
                     "The world starts to spin.",
                     "You look down on your hands,and see your skin wither apart.",
@@ -287,14 +298,14 @@ def inject_syringe(ctx: Context) -> None:
             else:
                 ctx.player.virus_stage.percent = max(
                     0,
-                    ctx.player.virus_stage.percent - SYRINGE_EFFECT,
+                    ctx.player.virus_stage.percent - bacteria.SYRINGE_EFFECT,
                 )
                 print_message(
                     "I feel the blood rushing, like never before!",
                     "Feels great.",
                 )
-        case Syringe.KNOWN_VACCINE_PROTOTYPE:
-            if ctx.player.virus_stage is VirusStage.Dormant:
+        case bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE:
+            if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
                 print_message(
                     "You either hoped to see your crew again,",
                     "or perhaps this was just a moment of stupidity?",
@@ -317,14 +328,14 @@ def inject_syringe(ctx: Context) -> None:
             else:
                 ctx.player.virus_stage.percent = max(
                     0,
-                    ctx.player.virus_stage.percent - SYRINGE_EFFECT,
+                    ctx.player.virus_stage.percent - bacteria.SYRINGE_EFFECT,
                 )
                 print_message(
                     f"This should give me some more time to stop the {hint.sprout('bacteria')}",
                     ...,
                     hint.weak("Injecting syringe"),
                     ...,
-                    hint.weak(f"-{SYRINGE_EFFECT}% bacteria"),
+                    hint.weak(f"-{bacteria.SYRINGE_EFFECT}% bacteria"),
                 )
         case _:
             assert_never(ctx.state.syringe)

@@ -1,13 +1,17 @@
-import random
 import time
 import os
 from collections.abc import Sequence
 from types import EllipsisType
+from typing import Final
 
 
+type Seconds = float
 type TextLine = str | EllipsisType
 type Message = Sequence[TextLine]
-type Seconds = float
+type ActionNameSegments = list[str]
+
+
+TEXT_LINE_TYPES: Final = (str, EllipsisType)
 
 
 def pause(delta: Seconds, /) -> None:
@@ -20,7 +24,7 @@ def print_message(
     *extra_message_segments: TextLine,
     step_delta: Seconds = 1.5,
 ) -> None:
-    if isinstance(message, (str, EllipsisType)):
+    if isinstance(message, TEXT_LINE_TYPES):
         full_message = (message, *extra_message_segments)
     else:
         full_message = (*message, *extra_message_segments)
@@ -30,25 +34,13 @@ def print_message(
             pause(step_delta)
 
 
-def blocked_message() -> tuple[str, ...]:
-    if random.randint(0, 1):
-        return ("Nowhere to go...",)
-    elif random.randint(0, 3):
-        return ("Dead end...",)
-    else:
-        return (
-            "Can't go through walls...",
-            "Sometimes I wish thou :=)",
-        )
-
-
-def get_input_segments() -> list[str]:
+def get_input_segments() -> ActionNameSegments:  # NOTE: Might not match
     # fmt: off
     return (
         input("Action: ")
         .strip()
         .replace("  ", " ")
-        .replace("  ", " ")
+        .replace("  ", " ")  # Perform twice to actually remove *all* double whitespace
         .lower()
         .split()
     )
