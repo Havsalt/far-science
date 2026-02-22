@@ -39,6 +39,7 @@ class StationName(StrEnum):
 @dataclass
 class StationState:
     science: int = 0
+    times_bonked_head: int = 0  # Accumulated from walking into walls
     has_power: bool = False
     asked_ai_for_help: bool = False
     completed_initial_reports_for_ai: bool = False

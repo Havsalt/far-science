@@ -5,9 +5,10 @@ from typing import assert_never
 
 from . import hint, science, bacteria
 from .station import CompartmentName
-from .dialogue import print_message, Reason
+from .dialogue import print_message, TextLine, Reason
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
+from .player import BONKS_UNTIL_HEAD_TRAUMA
 
 
 @action(anywhere, always, "Read the help manual", alias=["help"])
@@ -52,7 +53,25 @@ def where_am_i(ctx: Context) -> None:
     )
 
 
-def blocked_message(_: Context) -> Reason:
+def bonk_head(ctx: Context) -> Reason:
+    ctx.state.times_bonked_head += 1
+    if ctx.state.times_bonked_head >= BONKS_UNTIL_HEAD_TRAUMA:
+        ctx.state.times_bonked_head = 0
+        bonk_reason: list[TextLine] = [
+            f"You bonked your head against the {hint.error('wall')},",
+            hint.weak("once again."),
+        ]
+        if ctx.state.science > 0:
+            ctx.state.science -= 1
+            bonk_reason.extend(
+                (
+                    ...,
+                    "You suffered light head trauma.",
+                    hint.weak("-1 science"),
+                )
+            )
+        return bonk_reason
+
     if random.randint(0, 1):
         return hint.error("Nowhere to go...")
     elif random.randint(0, 3):
@@ -69,7 +88,7 @@ def blocked_message(_: Context) -> Reason:
     lambda ctx: ctx.compartment.next_compartment is not None,
     "Move forward to the next compartment I find",
     alias=["mf"],
-    when_unavailable=blocked_message,
+    when_unavailable=bonk_head,
 )
 def move_forward(ctx: Context) -> None:
     assert ctx.compartment.next_compartment is not None
@@ -83,7 +102,7 @@ def move_forward(ctx: Context) -> None:
     lambda ctx: ctx.compartment.prev_compartment is not None,
     "Move back into the previous compartment",
     alias=["mb"],
-    when_unavailable=blocked_message,
+    when_unavailable=bonk_head,
 )
 def move_backward(ctx: Context) -> None:
     assert ctx.compartment.prev_compartment is not None

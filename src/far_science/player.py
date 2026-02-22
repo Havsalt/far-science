@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Final
 
 from . import bacteria
 from .traits import InsideStation, InsideCompartment
@@ -6,6 +7,9 @@ from .traits import InsideStation, InsideCompartment
 
 type Percent = int
 type NonNegative = int
+
+
+BONKS_UNTIL_HEAD_TRAUMA: Final[NonNegative] = 3
 
 
 @dataclass
