@@ -69,7 +69,7 @@ class CompartmentName(StrEnum):
     SCIENCE_LAB = auto()
     MEDICAL_BAY = auto()
     SLEEP_POD = auto()
-    CARGO = auto()
+    CARGO_HOLD = auto()
     AI_GUIDANCE_CENTER = auto()
 
     def __str__(self) -> str:

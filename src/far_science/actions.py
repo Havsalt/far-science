@@ -362,7 +362,7 @@ def inject_syringe(ctx: Context) -> None:
 
 
 @action(
-    CompartmentName.CARGO,
+    CompartmentName.CARGO_HOLD,
     lambda ctx: ctx.compartment.is_discovered and not ctx.state.inspected_soil,
 )
 def inspect_the_soil(ctx: Context) -> None:
