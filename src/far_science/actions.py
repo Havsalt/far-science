@@ -16,7 +16,7 @@ def read_help(_: Context) -> None:
     print_message(
         "The map is divided into compartments in a linear space.",
         f"You may encounter {hint.weak('walls')},"
-        + " which {hint.weak('will hinder you from moving')} more in that direction.",
+        + f" which {hint.weak('will hinder you from moving')} more in that direction.",
         ...,
         "When you want to know what you can do in the current compartment,",
         f"type {hint.info('wcid')}.",
@@ -122,13 +122,13 @@ def sleep(ctx: Context) -> None:
             )
         elif ctx.player.virus_stage.percent < 40:
             print_message(
-                "Woke up,"
+                "Woke up,",
                 f"and found a new {hint.sprout('thorn')} sticking out of my hand!",
             )
         elif ctx.player.virus_stage.percent < 60:
             print_message(
-                "Woke up,"
-                f"and found a new {hint.sprout('leafy scales')} covering my legs!",
+                "Woke up,",
+                f"and found new {hint.sprout('leafy scales')} covering my legs!",
             )
         elif ctx.player.virus_stage.percent < 75:
             print_message(
@@ -161,7 +161,7 @@ def sleep(ctx: Context) -> None:
                 f"because plants have better things to do, than to worry.",
                 ...,
                 hint.error(
-                    f"You found peace in being a plant onboard {hint.label(ctx.station.name)}."
+                    f"You found peace in being a plant onboard {hint.label(ctx.station.name)}"
                 ),
             )
             exit()
@@ -237,11 +237,12 @@ def ask_for_help(ctx: Context) -> None:
 
 @action(
     CompartmentName.MEDICAL_BAY,
-    lambda ctx: ctx.compartment.is_discovered,
+    lambda ctx: ctx.compartment.is_discovered and not ctx.state.has_picked_up_syringe,
     "Pick up a syringe, with unknown content",
     alias=["pick", "up", "syringe"],
 )
 def pick_up_unknown_syringe(ctx: Context) -> None:
+    ctx.state.has_picked_up_syringe = True  # To prevent future pickups - Onetime action
     ctx.state.syringe = Syringe.UNKNOWN_CONTENT
     print_message(
         hint.weak("There is a syringe of unknown content on one of the desks."),
@@ -261,6 +262,7 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
     "Inject syringe",
 )
 def inject_syringe(ctx: Context) -> None:
+    ctx.state.syringe = None  # Remove syringe
     assert ctx.state.syringe is not None, (
         "Mismatch with trigger condition and execution"
     )

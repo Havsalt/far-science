@@ -44,6 +44,7 @@ class StationState:
     completed_initial_reports_for_ai: bool = False
     inspected_soil: bool = False
     syringe: Syringe | None = None
+    has_picked_up_syringe: bool = False
 
 
 @dataclass
