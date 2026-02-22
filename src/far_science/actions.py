@@ -54,13 +54,13 @@ def where_am_i(ctx: Context) -> None:
 
 def blocked_message(_: Context) -> TextLine | Message:
     if random.randint(0, 1):
-        return "Nowhere to go..."
+        return hint.error("Nowhere to go...")
     elif random.randint(0, 3):
-        return "Dead end..."
+        return hint.error("Dead end...")
     else:
         return (
-            "Can't go through walls...",
-            "Sometimes I wish thou",
+            hint.error("Can't go through walls..."),
+            hint.weak("Sometimes I wish it was possible"),
         )
 
 
@@ -69,7 +69,7 @@ def blocked_message(_: Context) -> TextLine | Message:
     lambda ctx: ctx.compartment.next_compartment is not None,
     "Move forward to the next compartment I find",
     alias=["mf"],
-    when_unavailable=lambda _: "Could",
+    when_unavailable=blocked_message,
 )
 def move_forward(ctx: Context) -> None:
     assert ctx.compartment.next_compartment is not None
@@ -83,6 +83,7 @@ def move_forward(ctx: Context) -> None:
     lambda ctx: ctx.compartment.prev_compartment is not None,
     "Move back into the previous compartment",
     alias=["mb"],
+    when_unavailable=blocked_message,
 )
 def move_backward(ctx: Context) -> None:
     assert ctx.compartment.prev_compartment is not None
