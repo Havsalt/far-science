@@ -179,5 +179,6 @@ world: Final = World(
     player=Player(
         station=starting_station,
         compartment=starting_compartment,
+        max_action_points=3,
     ),
 )

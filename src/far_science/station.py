@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 from .traits import HasName
-
+from .player import Syringe
 from .questing import Quest
 
 
@@ -42,6 +42,8 @@ class StationState:
     has_power: bool = False
     asked_ai_for_help: bool = False
     completed_initial_reports_for_ai: bool = False
+    inspected_soil: bool = False
+    syringe: Syringe | None = None
 
 
 @dataclass

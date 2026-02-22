@@ -1,20 +1,22 @@
-import time
-
 from . import (
     hint,
     actions as _,  # NOTE: Needed to load actions
 )
 from .action_utils import get_available_actions
-from .dialogue import print_message, get_input_segments
+from .dialogue import print_message, get_input_segments, pause
 from .context import Context
 from .world_gen import world
 
 
+# NOTE: Use env flag `FAR_SCIENCE_INSTANT_TEXT` to skip sleep between text lines
+
+
 def main():
+    ctx = Context(world)
     start_message = (
         f"You awake on a {hint.wet('cold')} metal floor.",
         f"{hint.wet('Ice')} is still dripping from your shoulders,",
-        f"wh£n you look up and read {hint.label('STATION')} {hint.label(world.player.station.name)} on the wall.",
+        f"wh£n you look up and read {hint.label('STATION')} {hint.label(ctx.station.name)} on the wall.",
         ...,
         "Fragments of t&e past, along hardcoded formulas, floats through your mind.",
         f"You slo#ly realize you're in spa?e,  {hint.weak('alone')}.",
@@ -28,8 +30,7 @@ def main():
         + " " * 20
         + f"(type '{hint.info('help')}' for list of actions)",
     )
-    print_message(start_message, step_time=1.5)
-    ctx = Context(world)
+    print_message(start_message, step_delta=1.5)
 
     while True:
         print()
@@ -41,9 +42,9 @@ def main():
             ):
                 world.player.compartment.current_quest.is_active = True
                 if world.player.compartment.current_quest.start_message is not None:
-                    time.sleep(1)
+                    pause(1)
                     print_message(*world.player.compartment.current_quest.start_message)
-                    time.sleep(1)
+                    pause(1)
                 continue  # Idk tbh...
 
             # End quest - May be instantly after started - An imidiate quest
@@ -52,9 +53,9 @@ def main():
                 and world.player.compartment.current_quest.is_completed(ctx)
             ):
                 if world.player.compartment.current_quest.end_message is not None:
-                    time.sleep(1)
+                    pause(1)
                     print_message(*world.player.compartment.current_quest.end_message)
-                    time.sleep(1)
+                    pause(1)
                 if world.player.compartment.current_quest.post_event is not None:
                     world.player.compartment.current_quest.post_event(ctx)
                 world.player.compartment.quest_stage += 1

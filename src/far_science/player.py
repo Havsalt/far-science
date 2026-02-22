@@ -1,15 +1,23 @@
 from dataclasses import dataclass, field
-from typing import final
+from enum import Enum, auto
+from typing import Final, final
 
 from .traits import InsideStation, InsideCompartment
+from .sentinel import Sentinel
+
+
+type Percent = int
+type NonNegative = int
+
+
+VIRUS_GROWING_RATE: Final[Percent] = 5
+SYRINGE_EFFECT: Final[NonNegative] = 21
 
 
 @final
-class VirusSeverity:
+class VirusStage:
     @final
-    class Dormant:
-        def __str__(self) -> str:
-            return f"{__class__.__name__}()"
+    class Dormant(metaclass=Sentinel): ...
 
     @final
     @dataclass(kw_only=True)
@@ -17,14 +25,19 @@ class VirusSeverity:
         percent: int = 0
 
 
+class Syringe(Enum):
+    UNKNOWN_CONTENT = auto()
+    KNOWN_VACCINE_PROTOTYPE = auto()
+
+
 @dataclass
 class Player(
     InsideStation,
     InsideCompartment,
 ):
-    max_energy: int = 3
-    energy: int = field(init=False)
-    virus_stage: VirusSeverity.Dormant | VirusSeverity.Growing = VirusSeverity.Dormant()
+    max_action_points: int
+    action_points: int = field(init=False)
+    virus_stage: type[VirusStage.Dormant] | VirusStage.Growing = VirusStage.Dormant
 
     def __post_init__(self) -> None:
-        self.energy = self.max_energy
+        self.action_points = self.max_action_points

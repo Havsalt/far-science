@@ -1,8 +1,9 @@
-Dong science before virus
+Doing science before virus
 - Frozen in cryo to make virus sleep
 - Virus is waking up, the warmer it gets (have "quest" at the start from AI to turn on heat)
 ?Had more crewmembers?
-Space station requires maintainance
+(Not yet) Space station requires maintainance
+       -> Perhaps single repair quest? *Fetch and apply quest*
 The AI supercomputer demands work before giving clues
 - Have initial encounter (heater quest)
 
@@ -11,7 +12,13 @@ Was making a super plant growing serum
 
 "When i stared into the space, I saw how the black hole merged with those planets,
 Perhaps that is what it takes?"
-- Put sprout in human (Me), fine at first...
+- Put sprout in human (ME), fine at first...
+
+About SPROUT BACTERIA
+- Like a virus
+- Injected into ME, for containment?
+- Because of Doloris, somehow?
+- Frozen inside of ME, to stop it from growing - turing it dormant
 
 About ME Character
 - Lonely as child
@@ -20,7 +27,8 @@ About ME Character
 - Did actually talk much to the others, but don't remember because of SPROUT and long CRYO
 
 Crew:
-- Me: Science
+- ME: Science
 - Snidri: Medbay
 - Gurkan: Cargo
 - Holtan: Reactor
+- Doloris: Commander (anywhere)

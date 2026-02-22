@@ -6,16 +6,18 @@ from typing import TYPE_CHECKING, Callable, Generator, Literal, Final, final
 
 from .station import CompartmentName
 from .context import Context
+from .sentinel import Sentinel
 
 if TYPE_CHECKING:
     from .world_gen import World
+
 
 type ActionClassName = str
 type ActionNameSegments = list[str]
 # Individual actions are defined as public methods
 type Action = Callable[[Context], None]
 type Condition = Callable[[Context], bool]
-type Place = CompartmentName | type[anywhere]
+type Place = type[anywhere] | CompartmentName
 
 
 @dataclass
@@ -28,14 +30,6 @@ class ConditionalAction:
 
 # Public export
 all_actions: Final = dict[Place, dict[str, ConditionalAction]]()
-
-
-@final
-class Sentinel(type):
-    __new__: None
-
-    def __repr__(cls) -> str:
-        return f"<{__class__.__name__}(<{cls.__name__}>)>"
 
 
 @final
@@ -87,9 +81,9 @@ def get_available_actions(
     world: World,
 ) -> Generator[ConditionalAction, None, None]:
     compartment = world.player.compartment
-    place_actions = all_actions.get(compartment.name, dict())
+    compartment_actions = all_actions.get(compartment.name, dict())
     anywhere_actions = all_actions.get(anywhere, dict())
-    possible_actions = place_actions | anywhere_actions
+    possible_actions = compartment_actions | anywhere_actions
     ctx = Context(world)
     for action in possible_actions.values():
         if action.condition(ctx):
