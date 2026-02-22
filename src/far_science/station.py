@@ -9,6 +9,7 @@ from typing import Literal
 from . import bacteria
 from .traits import HasName
 from .questing import Quest
+from .bool_state import Bool
 
 
 type WordClass[T] = T
@@ -42,7 +43,7 @@ class StationState:
     times_bonked_head: int = 0  # Accumulated from walking into walls
     has_power: bool = False
     asked_ai_for_help: bool = False
-    completed_initial_reports_for_ai: bool = False
+    completed_initial_reports_for_ai: Bool = Bool(False)
     inspected_soil: bool = False
     syringe: bacteria.Syringe | None = None
     has_picked_up_syringe: bool = False

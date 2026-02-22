@@ -8,12 +8,13 @@ from .station import CompartmentName
 from .context import Context
 from .sentinel import Sentinel
 from .dialogue import Reason, ActionNameSegments
+from .bool_state import AnyBool
 
 type ActionClassName = str
 # Individual actions are defined as public methods
 type Action = Callable[[Context], None]
 type UnavailableAction = Callable[[Context], Reason]
-type Condition = Callable[[Context], bool]
+type Condition = Callable[[Context], AnyBool]
 type Place = type[anywhere] | CompartmentName
 
 

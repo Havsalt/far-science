@@ -4,8 +4,9 @@ from typing import Callable
 
 from .dialogue import Message
 from .context import Context
+from .bool_state import AnyBool
 
-type Condition = Callable[[Context], bool]
+type Condition = Callable[[Context], AnyBool]
 type PostEvent = Callable[[Context], None]
 
 
@@ -32,12 +33,12 @@ class Quest:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.is_active=}, {self.start_message}, {self.end_message})"
 
-    def can_start(self, ctx: Context) -> bool:
+    def can_start(self, ctx: Context) -> AnyBool:
         if self._start_condition is not None:
             return self._start_condition(ctx)
         return True  # Treat `None` as no condition, meaning instantly started
 
-    def is_completed(self, ctx: Context) -> bool:
+    def is_completed(self, ctx: Context) -> AnyBool:
         if self._end_condition is not None:
             return self._end_condition(ctx)
         return True  # Treat `None` as no condition, meaning instantly completed
