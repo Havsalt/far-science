@@ -9,15 +9,15 @@ type Percent = int
 type NonNegative = int
 
 
-DAYS_UNTIL_DEATH: Final[NonNegative] = 9
+_DAYS_UNTIL_DEATH: Final[NonNegative] = 9
 """A rough estimate on how long it takes for the bacteria to kill"""
 
-VIRUS_GROWING_RATE: Final[Percent] = 100 // DAYS_UNTIL_DEATH
+GROW_RATE: Final[Percent] = 100 // _DAYS_UNTIL_DEATH
 SYRINGE_EFFECT: Final[NonNegative] = 21
 
 
 @final
-class VirusStage:
+class Stage:
     """Tagged union.
 
     Variants:

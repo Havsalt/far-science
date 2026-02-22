@@ -134,13 +134,13 @@ def check_action_points(ctx: Context) -> None:
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
-    if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
+    if ctx.player.virus_stage is bacteria.Stage.Dormant:
         print_message(
             "Quite a comfy cryo-bed.",
             "Feeling rested :)",
         )
     else:
-        ctx.player.virus_stage.percent += bacteria.VIRUS_GROWING_RATE
+        ctx.player.virus_stage.percent += bacteria.GROW_RATE
         if ctx.player.virus_stage.percent < 15:
             print_message(
                 "Quite a comfy cryo-bed.",
@@ -232,7 +232,7 @@ def turn_on_reactor(ctx: Context) -> None:
         print_message(hint.weak("-1 action point"))
     else:
         print_message(hint.weak("You barley had enough strength to push the button"))
-    ctx.player.virus_stage = bacteria.VirusStage.Growing(percent=0)
+    ctx.player.virus_stage = bacteria.Stage.Growing(percent=0)
 
 
 @action(CompartmentName.NUCLEAR_REACTOR, always, "Cause critical reactor overload")
@@ -304,7 +304,7 @@ def inject_syringe(ctx: Context) -> None:
                 ...,
                 hint.weak("Injecting syringe"),
             )
-            if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
+            if ctx.player.virus_stage is bacteria.Stage.Dormant:
                 print_message(
                     "The world starts to spin.",
                     "You look down on your hands,and see your skin wither apart.",
@@ -325,7 +325,7 @@ def inject_syringe(ctx: Context) -> None:
                     "Feels great.",
                 )
         case bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE:
-            if ctx.player.virus_stage is bacteria.VirusStage.Dormant:
+            if ctx.player.virus_stage is bacteria.Stage.Dormant:
                 print_message(
                     "You either hoped to see your crew again,",
                     "or perhaps this was just a moment of stupidity?",

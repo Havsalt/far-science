@@ -19,8 +19,8 @@ class Player(
 ):
     max_action_points: int
     action_points: int = field(init=False)
-    virus_stage: type[bacteria.VirusStage.Dormant] | bacteria.VirusStage.Growing = (
-        bacteria.VirusStage.Dormant
+    virus_stage: type[bacteria.Stage.Dormant] | bacteria.Stage.Growing = (
+        bacteria.Stage.Dormant
     )
 
     def __post_init__(self) -> None:
