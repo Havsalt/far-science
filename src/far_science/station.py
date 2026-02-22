@@ -89,7 +89,6 @@ class Compartment(HasName[CompartmentName]):
         *quests: Quest,
         quest_stage: int = 0,
         discovered: bool = False,
-        condition: int = 100,  # From 0-100, where 0 is BROKEN state
         next_compartment: Compartment | None = None,
         prev_compartment: Compartment | None = None,
     ):
@@ -97,7 +96,6 @@ class Compartment(HasName[CompartmentName]):
         self.quests = quests
         self.quest_stage = quest_stage
         self.is_discovered = discovered
-        self.condition = condition
         self.next_compartment = next_compartment
         self.prev_compartment = prev_compartment
 
