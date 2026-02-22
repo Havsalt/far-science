@@ -7,13 +7,12 @@ from typing import Callable, Generator, Literal, Final, final
 from .station import CompartmentName
 from .context import Context
 from .sentinel import Sentinel
-from .dialogue import TextLine, Message, ActionNameSegments
+from .dialogue import Reason, ActionNameSegments
 
 type ActionClassName = str
 # Individual actions are defined as public methods
 type Action = Callable[[Context], None]
 type UnavailableAction = Callable[[Context], Reason]
-type Reason = TextLine | Message | None
 type SkipAction = Callable[[Context], None]  # TODO: Implement
 type Condition = Callable[[Context], bool]
 type Place = type[anywhere] | CompartmentName

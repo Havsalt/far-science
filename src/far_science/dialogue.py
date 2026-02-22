@@ -8,6 +8,7 @@ from typing import Final
 type Seconds = float
 type TextLine = str | EllipsisType
 type Message = Sequence[TextLine]
+type Reason = TextLine | Message | None
 type ActionNameSegments = list[str]
 
 

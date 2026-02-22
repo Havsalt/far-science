@@ -5,7 +5,7 @@ from typing import assert_never
 
 from . import hint, science, bacteria
 from .station import CompartmentName
-from .dialogue import print_message, TextLine, Message
+from .dialogue import print_message, Reason
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
 
@@ -52,7 +52,7 @@ def where_am_i(ctx: Context) -> None:
     )
 
 
-def blocked_message(_: Context) -> TextLine | Message:
+def blocked_message(_: Context) -> Reason:
     if random.randint(0, 1):
         return hint.error("Nowhere to go...")
     elif random.randint(0, 3):
@@ -60,7 +60,7 @@ def blocked_message(_: Context) -> TextLine | Message:
     else:
         return (
             hint.error("Can't go through walls..."),
-            hint.weak("Sometimes I wish it was possible"),
+            hint.weak("... but sometimes I wish it was possible..."),
         )
 
 
