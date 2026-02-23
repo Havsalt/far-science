@@ -25,7 +25,7 @@ def main():
         f"bef*re the {hint.sprout('B$€^E...')} br... o....",
         ...,
         ...,
-        "  O\n" + "/ | \\\n" + " / \\",
+        hint.wet("  O\n" + "/ | \\\n" + " / \\"),
         f"What will {hint.weak('you')} do now?"
         + " " * 20
         + f"(type '{hint.info('help')}' for list of actions)",

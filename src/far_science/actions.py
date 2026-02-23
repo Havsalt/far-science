@@ -5,7 +5,7 @@ from typing import assert_never
 
 from . import hint, science, bacteria
 from .station import CompartmentName
-from .dialogue import print_message, TextLine, Reason
+from .dialogue import pause, print_message, TextLine, Reason
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
 from .player import BONKS_UNTIL_HEAD_TRAUMA
@@ -190,7 +190,7 @@ def sleep(ctx: Context) -> None:
                 "- and it does...",
                 ...,
                 "... but you are neither sad, nor happy",
-                f"because plants have better things to do, than to worry.",
+                "because plants have better things to do, than to worry.",
                 ...,
                 hint.error(
                     f"You found peace in being a plant onboard {hint.label(ctx.station.name)}"
@@ -267,6 +267,75 @@ def ask_for_help(ctx: Context) -> None:
 
 
 @action(
+    CompartmentName.AI_GUIDANCE_CENTER,
+    lambda ctx: ctx.state.completed_initial_reports_for_ai
+    and not ctx.state.learned_about_vaccine_prototype,
+    "Read a note laying on one of the panels",
+    alias=["read", "note"],
+    when_unavailable=lambda ctx: print_message(
+        f"There are no notes around in the {ctx.compartment.name}"
+    ),
+)
+def read_note_about_vaccine_prototype(ctx: Context) -> None:
+    assert ctx.state.syringe is not bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE, (
+        "Cannot know about the vaccine until this one-shot action is triggered"
+    )
+    ctx.state.learned_about_vaccine_prototype = True
+    print_message(
+        hint.label("== LOG NOTE :: Day 731 =="),
+        ...,
+        ...,
+        "I know what the rules say about this side project of mine,",
+        "but it will be in the best interest for the whole crew.",
+        ...,
+        hint.sprout("%-{==)---'"),
+        ...,
+        f"Not that I have anything against {hint.clue('her')}",
+        ...,
+        f"... but {hint.weak('she')} was the one that gave the order",
+        ...,
+        f"- and that's why {hint.weak('she')} should have been more prepared,"
+        "for the unkown we are about to discover...",
+        ...,
+        step_delta=1.5,
+    )
+    pause(2)
+    print_message(
+        hint.label("= ABOUT THE VACCINE ="),
+        ...,
+        f"Since this is a prototype, it is less likely to {hint.weak('cure')}",
+        "the bacteria.",
+        f"If no {hint.info('hostile bacteria is found, it will attack cardiac systems')}."
+        f"Poor {hint.bold('rat #42')} experienced {hint.info('abnormal increase in heart rythm')}.",
+        "In addition, the "
+        + hint.info("blood veins coagulated to the point of rupture"),
+        f"This resulted in the little thing {hint.info('bleeding out')}.",
+        ...,
+        hint.weak("That was a squeak I won't forget anytime soon..."),
+        ...,
+        "- S".rjust(40),
+        step_delta=2,
+    )
+    pause(4)
+    print_message(hint.label("YOU LEARNED ABOUT THE VACCINE PROTOTYPE"))
+
+    if ctx.state.syringe is None:
+        pause(2)
+        print_message(
+            f"One of the {hint.bold('prototypes')}"
+            + f" might still be {hint.info('around somewhere')}...",
+        )
+    elif ctx.state.syringe is bacteria.Syringe.UNKNOWN_CONTENT:
+        pause(2)
+        ctx.state.syringe = bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE
+        print_message(
+            "So that's what's inside of this...",
+            ...,
+            hint.weak("Might save my life one day"),
+        )
+
+
+@action(
     CompartmentName.MEDICAL_BAY,
     lambda ctx: ctx.compartment.is_discovered and not ctx.state.has_picked_up_syringe,
     "Pick up a syringe, with unknown content",
@@ -293,9 +362,8 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
     "Inject syringe",
 )
 def inject_syringe(ctx: Context) -> None:
-    ctx.state.syringe = None  # Remove syringe
     assert ctx.state.syringe is not None, (
-        "Mismatch with trigger condition and execution"
+        "Injecting the syringe, requires having the syringe"
     )
     match ctx.state.syringe:
         case bacteria.Syringe.UNKNOWN_CONTENT:
@@ -307,7 +375,7 @@ def inject_syringe(ctx: Context) -> None:
             if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
                 print_message(
                     "The world starts to spin.",
-                    "You look down on your hands,and see your skin wither apart.",
+                    "You look down on your hands, and see your blood begin to bubble.",
                     ...,
                     "Perhaps there was some crucial condition it required?",
                     "... but that doesn't matter anymore...",
@@ -359,6 +427,7 @@ def inject_syringe(ctx: Context) -> None:
                 )
         case _:
             assert_never(ctx.state.syringe)
+    ctx.state.syringe = None  # Remove syringe
 
 
 @action(

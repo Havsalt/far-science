@@ -46,6 +46,7 @@ class StationState:
     completed_initial_reports_for_ai: Bool = Bool(False)
     inspected_soil: bool = False
     syringe: bacteria.Syringe | None = None
+    learned_about_vaccine_prototype: bool = False
     has_picked_up_syringe: bool = False
 
 
