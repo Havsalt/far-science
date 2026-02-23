@@ -8,7 +8,7 @@ turn_on_main_power: _Final = _Quest(
     lambda ctx: ctx.compartment.is_discovered,
     [
         "Still working.",
-        "Should k#ep this running at all costs.",
+        "Should keep this running at all costs.",
     ],
     lambda ctx: ctx.state.has_power,
     [

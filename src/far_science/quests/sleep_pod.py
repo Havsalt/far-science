@@ -13,7 +13,7 @@ turn_on_heater: _Final = _Quest(
         ...,
         f"It's soOoOoO {_hint.wet('cold')} *fht* *fht*",
         ...,
-        "The backup p~wer isn't enough on its own",
+        "The backup power isn't enough on its own",
         "to keep the heater working properly.",
         ...,
         f"I should find my way to the {_hint.info(_CompartmentName.NUCLEAR_REACTOR)}.",
@@ -29,7 +29,7 @@ turn_on_heater: _Final = _Quest(
 inspect_tampering: _Final = _Quest(
     lambda ctx: ctx.compartment.is_discovered,
     [
-        f"There are s?gns of {_hint.clue('tampering')} with the {_hint.wet('cryo-pod')}.",
+        f"There are signs of {_hint.clue('tampering')} with the {_hint.wet('cryo-pod')}.",
         ...,
         _hint.weak("Who could have done this?"),
         ...,

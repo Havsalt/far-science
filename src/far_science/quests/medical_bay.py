@@ -7,7 +7,7 @@ from ..questing import Quest as _Quest
 discover: _Final = _Quest(
     lambda ctx: ctx.compartment.is_discovered,
     [
-        "Let's just stay away from the equ!pment for now...",
+        "Let's just stay away from the equipment for now...",
         ...,
         ...,
         _hint.weak("please"),

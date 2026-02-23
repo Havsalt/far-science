@@ -134,35 +134,35 @@ def check_action_points(ctx: Context) -> None:
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
-    if ctx.player.virus_stage is bacteria.Stage.Dormant:
+    if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
         print_message(
             "Quite a comfy cryo-bed.",
             "Feeling rested :)",
         )
     else:
-        ctx.player.virus_stage.percent += bacteria.GROW_RATE
-        if ctx.player.virus_stage.percent < 15:
+        ctx.player.bacteria_stage.percent += bacteria.GROW_RATE
+        if ctx.player.bacteria_stage.percent < 15:
             print_message(
                 "Quite a comfy cryo-bed.",
                 "Feeling rested :|",
             )
-        elif ctx.player.virus_stage.percent < 30:
+        elif ctx.player.bacteria_stage.percent < 30:
             print_message(
                 "Ready for a new day, but somewhat tired",
                 ...,
                 "... and very thirsty",
             )
-        elif ctx.player.virus_stage.percent < 40:
+        elif ctx.player.bacteria_stage.percent < 40:
             print_message(
                 "Woke up,",
                 f"and found a new {hint.sprout('thorn')} sticking out of my hand!",
             )
-        elif ctx.player.virus_stage.percent < 60:
+        elif ctx.player.bacteria_stage.percent < 60:
             print_message(
                 "Woke up,",
                 f"and found new {hint.sprout('leafy scales')} covering my legs!",
             )
-        elif ctx.player.virus_stage.percent < 75:
+        elif ctx.player.bacteria_stage.percent < 75:
             print_message(
                 "...",
                 ...,
@@ -171,12 +171,12 @@ def sleep(ctx: Context) -> None:
                 ...,
                 "I'm turning green...",
             )
-        elif ctx.player.virus_stage.percent < 90:
+        elif ctx.player.bacteria_stage.percent < 90:
             print_message(
                 "I can't stand this pain anymore!",
                 "Waking up was a mistake...",
             )
-        elif ctx.player.virus_stage.percent >= 100:
+        elif ctx.player.bacteria_stage.percent >= 100:
             print_message(
                 hint.weak("You wake up."),
                 ...,
@@ -232,7 +232,7 @@ def turn_on_reactor(ctx: Context) -> None:
         print_message(hint.weak("-1 action point"))
     else:
         print_message(hint.weak("You barley had enough strength to push the button"))
-    ctx.player.virus_stage = bacteria.Stage.Growing(percent=0)
+    ctx.player.bacteria_stage = bacteria.Stage.Growing(percent=0)
 
 
 @action(CompartmentName.NUCLEAR_REACTOR, always, "Cause critical reactor overload")
@@ -304,7 +304,7 @@ def inject_syringe(ctx: Context) -> None:
                 ...,
                 hint.weak("Injecting syringe"),
             )
-            if ctx.player.virus_stage is bacteria.Stage.Dormant:
+            if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
                 print_message(
                     "The world starts to spin.",
                     "You look down on your hands,and see your skin wither apart.",
@@ -316,16 +316,16 @@ def inject_syringe(ctx: Context) -> None:
                 )
                 exit()
             else:
-                ctx.player.virus_stage.percent = max(
+                ctx.player.bacteria_stage.percent = max(
                     0,
-                    ctx.player.virus_stage.percent - bacteria.SYRINGE_EFFECT,
+                    ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
                 )
                 print_message(
                     "I feel the blood rushing, like never before!",
                     "Feels great.",
                 )
         case bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE:
-            if ctx.player.virus_stage is bacteria.Stage.Dormant:
+            if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
                 print_message(
                     "You either hoped to see your crew again,",
                     "or perhaps this was just a moment of stupidity?",
@@ -346,9 +346,9 @@ def inject_syringe(ctx: Context) -> None:
                 )
                 exit()
             else:
-                ctx.player.virus_stage.percent = max(
+                ctx.player.bacteria_stage.percent = max(
                     0,
-                    ctx.player.virus_stage.percent - bacteria.SYRINGE_EFFECT,
+                    ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
                 )
                 print_message(
                     f"This should give me some more time to stop the {hint.sprout('bacteria')}",

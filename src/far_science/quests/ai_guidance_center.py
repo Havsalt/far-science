@@ -35,19 +35,19 @@ complete_initial_reports: _Final = _Quest(
     lambda ctx: ctx.state.asked_ai_for_help,
     [
         "AI: You got work to do,",
-        f"    wh^ch seems to be aproxim#tly {_hint.info('5 science')} reports",
+        f"    which seems to be aproxim#tly {_hint.info('5 science')} reports",
     ],
     lambda ctx: ctx.state.science >= 5,
     [
         "AI: Acceptable work.",
         ...,
         f"AI: Unlike the rest of the {_hint.clue('crew')}...",
-        f"    They have been l1ttle productive for the last {_hint.error('<BAD TIMESPAN>')}",
+        f"    They have been little productive for the last {_hint.error('<BAD TIMESPAN>')}",
         ...,
         "Me: Crew?",
         ...,
         "AI: There is a lot of work to catch up with,",
-        "    since nobody else is as c$pable as you in the lab.",
+        "    since nobody else is as capable as you in the lab.",
         ...,
         ...,
         f"AI: Check if {_hint.clue('Snidri')} is done with his {_hint.sprout('project')}"
