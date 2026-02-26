@@ -15,4 +15,3 @@ class StationState:
     inspected_soil: bool = False
     syringe: bacteria.Syringe | None = None
     learned_about_vaccine_prototype: bool = False
-    has_picked_up_syringe: bool = False

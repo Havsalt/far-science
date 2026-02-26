@@ -349,13 +349,12 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
 @action(
     CompartmentName.MEDICAL_BAY,
     lambda ctx: ctx.compartment.is_discovered
-    and not ctx.state.has_picked_up_syringe
+    and ctx.state.syringe is None
     and not ctx.state.learned_about_vaccine_prototype,  # Unknown
     "Pick up a syringe, with unknown content",
     alias=["pick", "up", "syringe"],
 )
 def pick_up_unknown_syringe(ctx: Context) -> None:
-    ctx.state.has_picked_up_syringe = True  # To prevent future pickups - Onetime action
     ctx.state.syringe = bacteria.Syringe.UNKNOWN_CONTENT
     print_message(
         hint.weak("There is a syringe of unknown content on one of the desks."),
@@ -372,13 +371,12 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
 @action(
     CompartmentName.MEDICAL_BAY,
     lambda ctx: ctx.compartment.is_discovered
-    and not ctx.state.has_picked_up_syringe
+    and not ctx.state.syringe is None
     and ctx.state.learned_about_vaccine_prototype,  # Known
     "Pick up the vaccine prototype",
     alias=["pick", "up", "vaccine"],
 )
 def pick_up_known_vaccine(ctx: Context) -> None:
-    ctx.state.has_picked_up_syringe = True  # To prevent future pickups - Onetime action
     ctx.state.syringe = bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE
     print_message(
         "The prototype!!",
