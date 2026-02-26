@@ -7,7 +7,7 @@ module-name = "far_science"
 
 [project]
 name = "havsalt-far-science"
-version = "0.1.0.dev2"
+version = "0.1.0.dev3"
 description = "A mysterious text adventure, taking place on a space station"
 authors = [
     { name = "Havsalt", email = "77575424+Havsalt@users.noreply.github.com" }
