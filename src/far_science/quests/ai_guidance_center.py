@@ -50,7 +50,7 @@ complete_initial_reports: _Final = _Quest(
         "    since nobody else is as capable as you in the lab.",
         ...,
         ...,
-        f"AI: Check if {_hint.clue('Snidri')} is done with his {_hint.sprout('project')}"
+        f"AI: Check if {_hint.clue('Snidri')} is done with his {_hint.bacteria('project')}"
         + f" in the {_hint.label(_CompartmentName.MEDICAL_BAY)}.",
         "    He is long over schedule... *bzZt*",
     ],

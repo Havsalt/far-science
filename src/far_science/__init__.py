@@ -22,7 +22,7 @@ def main():
         f"You slo#ly realize you're in spa?e,  {hint.weak('alone')}.",
         ...,
         f"There might be some {hint.clue('€lues')} around the old projects you w€rked on,",
-        f"bef*re the {hint.sprout('B$€^E...')} br... o....",
+        f"bef*re the {hint.bacteria('B$€^E...')} br... o....",
         ...,
         ...,
         hint.wet("  O\n" + "/ | \\\n" + " / \\"),

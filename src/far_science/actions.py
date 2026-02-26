@@ -15,8 +15,8 @@ from .player import BONKS_UNTIL_HEAD_TRAUMA
 def read_help(_: Context) -> None:
     print_message(
         "The map is divided into compartments in a linear space.",
-        f"You may encounter {hint.weak('walls')},"
-        + f" which {hint.weak('will hinder you from moving')} more in that direction.",
+        f"You may encounter {hint.bold('walls')},"
+        + f" which {hint.bold('will hinder you from moving')} more in that direction.",
         ...,
         "When you want to know what you can do in the current compartment,",
         f"type {hint.info('wcid')}.",
@@ -73,12 +73,12 @@ def bonk_head(ctx: Context) -> Reason:
         return bonk_reason
 
     if random.randint(0, 1):
-        return hint.error("Nowhere to go...")
+        return f"A {hint.error('wall')} in your way. Nowhere to go..."
     elif random.randint(0, 3):
-        return hint.error("Dead end...")
+        return f"That wall makes this {hint.error('wall')} a dead end..."
     else:
         return (
-            hint.error("Can't go through walls..."),
+            f"Can't go through {hint.error('walls')}...",
             hint.weak("... but sometimes I wish it was possible..."),
         )
 
@@ -156,12 +156,12 @@ def sleep(ctx: Context) -> None:
         elif ctx.player.bacteria_stage.percent < 40:
             print_message(
                 "Woke up,",
-                f"and found a new {hint.sprout('thorn')} sticking out of my hand!",
+                f"and found a new {hint.bacteria('thorn')} sticking out of my hand!",
             )
         elif ctx.player.bacteria_stage.percent < 60:
             print_message(
                 "Woke up,",
-                f"and found new {hint.sprout('leafy scales')} covering my legs!",
+                f"and found new {hint.bacteria('leafy scales')} covering my legs!",
             )
         elif ctx.player.bacteria_stage.percent < 75:
             print_message(
@@ -170,7 +170,7 @@ def sleep(ctx: Context) -> None:
                 "uaaAAA!!",
                 "It hurts in my chest!",
                 ...,
-                "I'm turning green...",
+                f"I'm turning {hint.bacteria('green')}...",
             )
         elif ctx.player.bacteria_stage.percent < 90:
             print_message(
@@ -181,7 +181,7 @@ def sleep(ctx: Context) -> None:
             print_message(
                 hint.weak("You wake up."),
                 ...,
-                f"You stay calm and {hint.sprout('rooted')}.",
+                f"You stay calm and {hint.bacteria('rooted')}.",
                 ...,
                 ...,
                 "At this point...",
@@ -211,6 +211,10 @@ def sleep(ctx: Context) -> None:
     lambda ctx: ctx.player.action_points > 0,
     "Do what I can best, SCIENCE!",
     alias=["ds"],
+    when_unavailable=lambda _: print_message(
+        f"I'm too {hint.error('tired')} for science,"
+        + f" and could use some {hint.info('sleep')}",
+    ),
 )
 def do_science(ctx: Context) -> None:
     ctx.player.action_points -= 1
@@ -289,12 +293,10 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
         "I know what the rules say about this side project of mine,",
         "but it will be in the best interest for the whole crew.",
         ...,
-        hint.sprout("%-{==)---'"),
+        hint.bacteria("%-{==)---"),
         ...,
         f"Not that I have anything against {hint.clue('her')}",
-        ...,
         f"... but {hint.weak('she')} was the one that gave the order",
-        ...,
         f"- and that's why {hint.weak('she')} should have been more prepared,"
         "for the unkown we are about to discover...",
         ...,
@@ -306,7 +308,7 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
         ...,
         f"Since this is a prototype, it is less likely to {hint.weak('cure')}",
         "the bacteria.",
-        f"If no {hint.info('hostile bacteria is found, it will attack cardiac systems')}."
+        f"If no {hint.info('hostile bacteria is found, it will attack cardiac systems')}.",
         f"Poor {hint.bold('rat #42')} experienced {hint.info('abnormal increase in heart rythm')}.",
         "In addition, the "
         + hint.info("blood veins coagulated to the point of rupture"),
@@ -401,7 +403,7 @@ def inject_syringe(ctx: Context) -> None:
                     ...,
                     hint.weak("Injecting syringe"),
                     ...,
-                    f"Because there was {hint.info('no')} {hint.sprout('bacteria')} {hint.info('to fight')},",
+                    f"Because there was {hint.info('no')} {hint.bacteria('bacteria')} {hint.info('to fight')},",
                     "the contents caused increased heart rhythm,",
                     "in conjunction with heavy coagulations.",
                     ...,
@@ -420,7 +422,7 @@ def inject_syringe(ctx: Context) -> None:
                     ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
                 )
                 print_message(
-                    f"This should give me some more time to stop the {hint.sprout('bacteria')}",
+                    f"This should give me some more time to stop the {hint.bacteria('bacteria')}",
                     ...,
                     hint.weak("Injecting syringe"),
                     ...,
