@@ -206,15 +206,25 @@ def sleep(ctx: Context) -> None:
             )
 
 
+def refuse_science(ctx: Context) -> Reason:
+    if ctx.compartment.name is not CompartmentName.SCIENCE_LAB:
+        print_message(
+            ctx.compartment.name.article
+            + f" is no {hint.error('proper place')} for SCIENCE!"
+        )
+        return
+    print_message(
+        f"I'm too {hint.error('tired')} for science,"
+        + f" and could use some {hint.info('sleep')}",
+    )
+
+
 @action(
     CompartmentName.SCIENCE_LAB,
     lambda ctx: ctx.player.action_points > 0,
     "Do what I can best, SCIENCE!",
     alias=["ds"],
-    when_unavailable=lambda _: print_message(
-        f"I'm too {hint.error('tired')} for science,"
-        + f" and could use some {hint.info('sleep')}",
-    ),
+    when_unavailable=refuse_science,
 )
 def do_science(ctx: Context) -> None:
     ctx.player.action_points -= 1
