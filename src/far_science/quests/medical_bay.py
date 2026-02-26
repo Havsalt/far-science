@@ -21,7 +21,7 @@ search_for_the_crew: _Final = _Quest(
         "Well,",
         "there are nobody here...",
         ...,
-        f"... and who even is this {_hint.weak('Snidri')}!",
+        f"... and who even is this {_hint.bold('Snidri')}!",
         ...,
         ...,
         f"For all I know, {_hint.weak('"the crew"')} might not even be real,",
