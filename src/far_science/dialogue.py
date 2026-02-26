@@ -6,7 +6,7 @@ import time
 import os
 from collections.abc import Sequence
 from types import EllipsisType
-from typing import Final
+from typing import Final, LiteralString
 
 from . import bacteria, hint
 from .context import Context
@@ -23,8 +23,17 @@ type ActionNameSegments = list[str]
 TEXT_LINE_TYPES: Final = (str, EllipsisType)
 
 
+def is_env_truthy(env_key: LiteralString) -> bool:
+    value = os.environ.get(env_key)
+    if value is None:
+        return False
+    if value in ("1", "y", "yes", "true", "on"):
+        return True
+    return False
+
+
 def pause(delta: Seconds, /) -> None:
-    if not os.environ.get("FAR_SCIENCE_INSTANT_TEXT"):
+    if is_env_truthy("FAR_SCIENCE_INSTANT_TEXT"):
         time.sleep(delta)
 
 
