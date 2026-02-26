@@ -33,7 +33,7 @@ def is_env_truthy(env_key: LiteralString) -> bool:
 
 
 def pause(delta: Seconds, /) -> None:
-    if is_env_truthy("FAR_SCIENCE_INSTANT_TEXT"):
+    if not is_env_truthy("FAR_SCIENCE_INSTANT_TEXT"):
         time.sleep(delta)
 
 
