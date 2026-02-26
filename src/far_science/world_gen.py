@@ -35,6 +35,7 @@ world: Final = World(
                     CompartmentName.MEDICAL_BAY,
                     quests.medical_bay.discover,
                     quests.medical_bay.search_for_the_crew,
+                    quests.to_be_continued,
                 ),
                 Compartment(
                     CompartmentName.AI_GUIDANCE_CENTER,
