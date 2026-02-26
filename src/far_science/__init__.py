@@ -3,7 +3,7 @@ from . import (
     actions as _,  # NOTE: Needed to load actions
 )
 from .action_utils import get_available_actions, get_action_by_name
-from .dialogue import TEXT_LINE_TYPES, print_message, get_input_segments, pause
+from .dialogue import print_message, get_input_segments, pause
 from .context import Context
 from .world_gen import world
 
@@ -13,24 +13,6 @@ from .world_gen import world
 
 def main():
     ctx = Context(world)
-    start_message = (
-        f"You awake on a {hint.wet('cold')} metal floor.",
-        f"{hint.wet('Ice')} is still dripping from your shoulders,",
-        f"wh£n you look up and read {hint.label('STATION')} {hint.label(ctx.station.name)} on the wall.",
-        ...,
-        "Fragments of t&e past, along hardcoded formulas, floats through your mind.",
-        f"You slo#ly realize you're in spa?e,  {hint.weak('alone')}.",
-        ...,
-        f"There might be some {hint.clue('€lues')} around the old projects you w€rked on,",
-        f"bef*re the {hint.bacteria('B$€^E...')} br... o....",
-        ...,
-        ...,
-        hint.wet("  O\n" + "/ | \\\n" + " / \\"),
-        f"What will {hint.weak('you')} do now?"
-        + " " * 20
-        + f"(type '{hint.info('help')}' for list of actions)",
-    )
-    print_message(start_message, step_delta=1.5)
 
     while True:
         print()

@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from types import EllipsisType
 from typing import Final
 
-from . import bacteria
+from . import bacteria, hint
 from .context import Context
 
 
@@ -81,4 +81,25 @@ def get_input_segments() -> ActionNameSegments:  # NOTE: Might not match
         .replace("  ", " ")  # Perform twice to actually remove *all* double whitespace
         .lower()
         .split()
+    )
+
+
+def print_start_message(ctx: Context) -> None:
+    print_message(
+        f"You awake on a {hint.wet('cold')} metal floor.",
+        f"{hint.wet('Ice')} is still dripping from your shoulders,",
+        f"wh£n you look up and read {hint.label('STATION')} {hint.label(ctx.station.name)} on the wall.",
+        ...,
+        "Fragments of t&e past, along hardcoded formulas, floats through your mind.",
+        f"You slo#ly realize you're in spa?e,  {hint.weak('alone')}.",
+        ...,
+        f"There might be some {hint.clue('€lues')} around the old projects you w€rked on,",
+        f"bef*re the {hint.bacteria('B$€^E...')} br... o....",
+        ...,
+        ...,
+        hint.wet("  O\n" + "/ | \\\n" + " / \\"),
+        f"What will {hint.weak('you')} do now?"
+        + " " * 20
+        + f"(type '{hint.info('help')}' for list of actions)",
+        step_delta=1.5,
     )
