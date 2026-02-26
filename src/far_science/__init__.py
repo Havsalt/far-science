@@ -3,7 +3,7 @@ from . import (
     actions as _,  # NOTE: Needed to load actions
 )
 from .action_utils import get_available_actions, get_action_by_name
-from .dialogue import print_message, get_input_segments, pause
+from .dialogue import print_start_message, print_message, get_input_segments, pause
 from .context import Context
 from .world_gen import world
 
@@ -13,6 +13,7 @@ from .world_gen import world
 
 def main():
     ctx = Context(world)
+    print_start_message(ctx)
 
     while True:
         print()
