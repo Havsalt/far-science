@@ -287,9 +287,7 @@ def ask_for_help(ctx: Context) -> None:
     and not ctx.state.learned_about_vaccine_prototype,
     "Read a note laying on one of the panels",
     alias=["read", "note"],
-    when_unavailable=lambda ctx: print_message(
-        f"There are no notes around in the {ctx.compartment.name}"
-    ),
+    when_unavailable=lambda ctx: f"There are no notes around in the {ctx.compartment.name}",
 )
 def read_note_about_vaccine_prototype(ctx: Context) -> None:
     assert ctx.state.syringe is not bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE, (
@@ -335,7 +333,7 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
     if ctx.state.syringe is None:
         pause(2)
         print_message(
-            f"One of the {hint.bold('prototypes')}"
+            f"One of the {hint.bold('vaccine prototypes')}"
             + f" might still be {hint.info('around somewhere')}...",
         )
     elif ctx.state.syringe is bacteria.Syringe.UNKNOWN_CONTENT:
@@ -350,7 +348,9 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
 
 @action(
     CompartmentName.MEDICAL_BAY,
-    lambda ctx: ctx.compartment.is_discovered and not ctx.state.has_picked_up_syringe,
+    lambda ctx: ctx.compartment.is_discovered
+    and not ctx.state.has_picked_up_syringe
+    and not ctx.state.learned_about_vaccine_prototype,  # Unknown
     "Pick up a syringe, with unknown content",
     alias=["pick", "up", "syringe"],
 )
@@ -365,7 +365,27 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
         ...,
         hint.weak("but it might kill me under the wrong conditions..."),
         ...,
-        hint.weak("Maybe I can find out more a about it?"),
+        hint.weak("- Maybe I can find out more a about it?"),
+    )
+
+
+@action(
+    CompartmentName.MEDICAL_BAY,
+    lambda ctx: ctx.compartment.is_discovered
+    and not ctx.state.has_picked_up_syringe
+    and ctx.state.learned_about_vaccine_prototype,  # Known
+    "Pick up the vaccine prototype",
+    alias=["pick", "up", "vaccine"],
+)
+def pick_up_known_vaccine(ctx: Context) -> None:
+    ctx.state.has_picked_up_syringe = True  # To prevent future pickups - Onetime action
+    ctx.state.syringe = bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE
+    print_message(
+        "The prototype!!",
+        "Just lying here on the desk.",
+        ...,
+        "I'll take that, thank you",
+        ...,
     )
 
 
