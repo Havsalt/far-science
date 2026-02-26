@@ -131,6 +131,7 @@ def check_action_points(ctx: Context) -> None:
     CompartmentName.SLEEP_POD,
     lambda ctx: ctx.compartment.is_discovered,
     "Get some rest",
+    alias=["s"],
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
