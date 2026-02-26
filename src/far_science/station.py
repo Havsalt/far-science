@@ -6,10 +6,9 @@ from enum import StrEnum, auto
 from dataclasses import dataclass, field
 from typing import Literal
 
-from . import bacteria
 from .traits import HasName
 from .questing import Quest
-from .bool_state import Bool
+from .state import StationState
 
 
 type WordClass[T] = T
@@ -34,20 +33,6 @@ class StationName(StrEnum):
 
     def __str__(self) -> str:
         return super().__str__().replace("_", " ").title()
-
-
-# This is just where is dump all shared quest states, regarding the station
-@dataclass
-class StationState:
-    science: int = 0
-    times_bonked_head: int = 0  # Accumulated from walking into walls
-    has_power: bool = False
-    asked_ai_for_help: bool = False
-    completed_initial_reports_for_ai: Bool = Bool(False)
-    inspected_soil: bool = False
-    syringe: bacteria.Syringe | None = None
-    learned_about_vaccine_prototype: bool = False
-    has_picked_up_syringe: bool = False
 
 
 @dataclass
