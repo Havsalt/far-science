@@ -75,7 +75,7 @@ def bonk_head(ctx: Context) -> Reason:
     if random.randint(0, 1):
         return f"A {hint.error('wall')} in your way. Nowhere to go..."
     elif random.randint(0, 3):
-        return f"That wall makes this {hint.error('wall')} a dead end..."
+        return f"That {hint.error('wall')} makes this a dead end..."
     else:
         return (
             f"Can't go through {hint.error('walls')}...",
