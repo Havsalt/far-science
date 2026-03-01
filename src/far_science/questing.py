@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Literal
 
 from .dialogue import Message
 from .context import Context
@@ -8,6 +8,19 @@ from .bool_state import AnyBool
 
 type Condition = Callable[[Context], AnyBool]
 type PostEvent = Callable[[Context], None]
+
+
+
+def instant(_: Context) -> Literal[True]:
+    """Thin function for marking instant start/completion of quest.
+
+    Args:
+        _ (Context): Dummy parameter to accept a `Context`.
+
+    Returns:
+        Literal[True]: Always `True`, for starting/completing instantly.
+    """
+    return True
 
 
 # NOTE: Will only trigger when in compartment the quest is attached to

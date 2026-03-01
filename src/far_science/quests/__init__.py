@@ -7,14 +7,14 @@ from . import (
     nuclear_reactor as nuclear_reactor,
     science_lab as science_lab,
     sleep_pod as sleep_pod,
+    hydroponics as hydroponics,
 )
 
 
 # DEV: Remove this when reaching major version 1
 from typing import Final
 from .. import hint as _hint
-from ..questing import Quest as _Quest
-from ..action_utils import always as _instant
+from ..questing import Quest as _Quest, instant as _instant
 
 to_be_continued: Final = _Quest(
     _instant,

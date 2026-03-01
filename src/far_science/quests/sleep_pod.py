@@ -1,10 +1,9 @@
 from typing import Final as _Final
 
 from .. import hint as _hint
-from ..questing import Quest as _Quest
+from ..questing import Quest as _Quest, instant as _instant
 
 from ..station import CompartmentName as _CompartmentName
-from ..action_utils import always as _instant
 
 
 turn_on_heater: _Final = _Quest(
