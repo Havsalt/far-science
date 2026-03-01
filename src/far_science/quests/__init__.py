@@ -17,7 +17,7 @@ from .. import hint as _hint
 from ..questing import Quest as _Quest, instant as _instant
 
 to_be_continued: Final = _Quest(
-    _instant,
+    lambda ctx: ctx.state.planted_seeds,
     [
         _hint.label("== TO BE CONTINUED =="),
         ...,

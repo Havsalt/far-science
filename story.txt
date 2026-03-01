@@ -29,6 +29,22 @@ About ME Character
 Crew:
 - ME: Science
 - Snidri: Medbay
-- Gurkan: Cargo
+- Gurkan: Cargo + Hydroponics
 - Holtan: Reactor
 - Doloris: Commander (anywhere)
+
+MECHANICS ABOUT HYDROPONICS
+- This will be something to work on over the days
+- Multiple factors needs to be **good**
+  * Dirt - Fix in HYDROPONICS after learning about it in CARGO
+  * Power - From reactor in first "do quest"
+  * Water - Requires power and waiting
+    + Water level is increasing over time, by waiting days (sleep)
+- The result:
+  * Knowledge about plants and lore
+    + Holtan mention "He has power problems, so the plants are dying"
+  * Food every day? - That keeps the bacteria grow less?
+
+
+THE GOAL OF THE GAME:
+- Survive long enough to send the BACTERIA back to earth in a pod.

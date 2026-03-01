@@ -9,6 +9,7 @@ from .dialogue import pause, print_message, TextLine, Reason
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
 from .player import BONKS_UNTIL_HEAD_TRAUMA
+from .state import WaterLevel
 
 
 @action(anywhere, always, "Read the help manual", alias=["help"])
@@ -112,7 +113,7 @@ def move_backward(ctx: Context) -> None:
 
 
 @action(anywhere, always, alias=["cs"])
-def check_status(ctx: Context) -> None:
+def check_science(ctx: Context) -> None:
     print_message(
         f"Science onboard station {hint.label(ctx.station.name)}:"
         f" {hint.info(str(ctx.state.science))}"
@@ -135,6 +136,8 @@ def check_action_points(ctx: Context) -> None:
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
+    if ctx.state.water_level.has_active_sprinkling:
+        ctx.state.water_level = ctx.state.water_level.next_stage
     if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
         print_message(
             "Quite a comfy cryo-bed.",
@@ -208,15 +211,15 @@ def sleep(ctx: Context) -> None:
 
 def refuse_science(ctx: Context) -> Reason:
     if ctx.compartment.name is not CompartmentName.SCIENCE_LAB:
-        print_message(
+        return [
             ctx.compartment.name.article
             + f" is no {hint.error('proper place')} for SCIENCE!"
-        )
-        return
-    print_message(
-        f"I'm too {hint.error('tired')} for science,"
-        + f" and could use some {hint.info('sleep')}",
-    )
+        ]
+    if ctx.player.action_points <= 0:
+        return [
+            f"I'm too {hint.error('tired')} for science,"
+            + f" and could use some {hint.info('sleep')}",
+        ]
 
 
 @action(
@@ -228,7 +231,7 @@ def refuse_science(ctx: Context) -> Reason:
 )
 def do_science(ctx: Context) -> None:
     ctx.player.action_points -= 1
-    print_message(f"{hint.weak('-1 action point')}")
+    print_message(f"{hint.weak('-1 action point, +1 science')}")
     ctx.state.science += 1
     science_message = random.choice(science.MESSAGES)
     colored_science_message = hint.label(science_message)
@@ -371,7 +374,7 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
 @action(
     CompartmentName.MEDICAL_BAY,
     lambda ctx: ctx.compartment.is_discovered
-    and not ctx.state.syringe is None
+    and ctx.state.syringe is None
     and ctx.state.learned_about_vaccine_prototype,  # Known
     "Pick up the vaccine prototype",
     alias=["pick", "up", "vaccine"],
@@ -382,7 +385,7 @@ def pick_up_known_vaccine(ctx: Context) -> None:
         "The prototype!!",
         "Just lying here on the desk.",
         ...,
-        "I'll take that, thank you",
+        "I'll take that, thank you.",
         ...,
     )
 
@@ -453,7 +456,6 @@ def inject_syringe(ctx: Context) -> None:
                     f"This should give me some more time to stop the {hint.bacteria('bacteria')}",
                     ...,
                     hint.weak("Injecting syringe"),
-                    ...,
                     hint.weak(f"-{bacteria.SYRINGE_EFFECT}% bacteria"),
                 )
         case _:
@@ -463,10 +465,10 @@ def inject_syringe(ctx: Context) -> None:
 
 @action(
     CompartmentName.CARGO_HOLD,
-    lambda ctx: ctx.compartment.is_discovered and not ctx.state.inspected_soil,
+    lambda ctx: ctx.compartment.is_discovered and not ctx.state.inspected_cargo_soil,
 )
 def inspect_the_soil(ctx: Context) -> None:
-    ctx.state.inspected_soil = True
+    ctx.state.inspected_cargo_soil = True
     ctx.state.science += 1
     print_message(
         "Looks like the soil is quite fertile,",
@@ -474,4 +476,118 @@ def inspect_the_soil(ctx: Context) -> None:
         ...,
         hint.label("YOU LEARNED ABOUT FERTILE SOIL"),
         hint.weak("+1 science"),
+    )
+
+
+def refuse_fetching_soil(ctx: Context) -> Reason:
+    if not ctx.state.inspected_cargo_soil:
+        return [
+            f"I know {hint.invalid('nothing about soil')}.",
+            "Why even care about something as basic as old soil?",
+        ]
+    if ctx.player.action_points <= 0:
+        return f"Too {hint.invalid('tired')} for fetching soil."
+
+
+@action(
+    CompartmentName.CARGO_HOLD,
+    lambda ctx: ctx.compartment.is_discovered
+    and ctx.state.inspected_cargo_soil
+    and not ctx.state.fetched_soil,
+    "Take some soil, and stuff it in your pockets",
+    when_unavailable=refuse_fetching_soil,
+)
+def take_some_soil(ctx: Context) -> None:
+    ctx.state.fetched_soil = True
+    ctx.player.action_points -= 1
+    print_message(hint.weak("-1 action point"))
+    print_message(
+        "You take some soil in your pockets,",
+        "and walk away with a smile",
+        ...,
+        "- and dirty clothes",
+    )
+
+
+@action(  # Can be checked multiple times
+    CompartmentName.HYDROPONICS_DOME,
+    lambda ctx: ctx.compartment.is_discovered,
+    "Check the local control panel for status",
+    alias=["lcp"],
+)
+def check_dome_control_panel(ctx: Context) -> None:
+    water_hint = hint.ok if ctx.state.water_level.is_good else hint.error
+    power_info = "Power supply: " + (
+        hint.ok("online") if ctx.state.has_power else hint.bad("offline")
+    )
+    water_info = "Water levels: " + water_hint(ctx.state.water_level.pretty_name)
+    dirt_info = "Soil quality: " + (
+        hint.ok("good") if ctx.state.soil_quality_is_good else hint.bad("bad")
+    )
+    plant_info = "Plant health: " + (
+        hint.ok("growing") if ctx.state.planted_seeds else hint.bad("missing")
+    )
+    print_message(
+        hint.label(f"== STATUS OF {ctx.compartment.name} =="),
+        ...,
+        power_info,
+        water_info,
+        dirt_info,
+        plant_info,
+    )
+    if (
+        not ctx.state.checked_hydroponics_status
+    ):  # Oneshot - To trigger "fetch soil" quest
+        ctx.state.checked_hydroponics_status = True
+        assert not ctx.state.soil_quality_is_good, (
+            f"The soil quality cannot be improved before initial {ctx.compartment.name} panel check"
+        )
+        if ctx.state.inspected_cargo_soil:
+            print_message(
+                f"I can go back to the {CompartmentName.CARGO_HOLD},"
+                "to get some of that high quality soil.",
+            )
+
+
+def refuse_sprinkling(ctx: Context) -> Reason:
+    if ctx.state.water_level.has_active_sprinkling:
+        return "The sprinklers are" + hint.invalid("already active") + "."
+    if not ctx.state.has_power:
+        return (
+            hint.info("Power")
+            + " is "
+            + hint.invalid("required")
+            + "for the sprinkler to start."
+        )
+
+
+@action(
+    CompartmentName.HYDROPONICS_DOME,
+    lambda ctx: ctx.compartment.is_discovered
+    and ctx.state.has_power
+    and not ctx.state.water_level.has_active_sprinkling,
+    "Turn on the sprinkling system, to bring these poor plants some water",
+    alias=["turn", "on", "sprinkler"],
+    when_unavailable=refuse_sprinkling,
+)
+def turn_on_sprinkling_system(ctx: Context) -> None:
+    ctx.state.water_level = WaterLevel.MOISTURE
+    print_message(
+        hint.weak("You hear the sound of water sprinkled through the air."),
+        ...,
+        f"This should help improve the watering {hint.info('over time')}.",
+    )
+
+
+@action(
+    CompartmentName.HYDROPONICS_DOME,
+    lambda ctx: ctx.state.has_seeds and not ctx.state.planted_seeds,
+    f"Plant seeds, in your newly fixed {CompartmentName.HYDROPONICS_DOME}",
+    alias=["plant", "seed"],
+)
+def plant_seeds(ctx: Context) -> None:
+    ctx.state.planted_seeds = True
+    print_message(
+        hint.weak("You planted some seeds."),
+        "The new plants should thrive under these top notch conditons.",
     )

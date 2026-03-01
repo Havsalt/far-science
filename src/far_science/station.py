@@ -57,6 +57,7 @@ class CompartmentName(StrEnum):
     SLEEP_POD = auto()
     CARGO_HOLD = auto()
     AI_GUIDANCE_CENTER = auto()
+    HYDROPONICS_DOME = auto()
 
     def __str__(self) -> str:
         return super().__str__().replace("_", " ").title()

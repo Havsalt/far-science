@@ -35,17 +35,25 @@ world: Final = World(
                     CompartmentName.MEDICAL_BAY,
                     quests.medical_bay.discover,
                     quests.medical_bay.search_for_the_crew,
-                    quests.to_be_continued,
+                    # TODO: Add read note about next thing - Or just go Hydroponics route?
                 ),
                 Compartment(
                     CompartmentName.AI_GUIDANCE_CENTER,
                     quests.ai_guidance_center.discover,
                     quests.ai_guidance_center.encounter_ai,
                     quests.ai_guidance_center.complete_initial_reports,
+                    quests.ai_guidance_center.give_seeds,
                 ),
                 Compartment(
                     CompartmentName.CARGO_HOLD,
                     quests.cargo_hold.discover_cargo,
+                ),
+                Compartment(
+                    CompartmentName.HYDROPONICS_DOME,
+                    quests.hydroponics.discover,
+                    quests.hydroponics.fetch_soil,
+                    quests.hydroponics.reach_good_plant_conditions,
+                    quests.to_be_continued,
                 ),
             ],
         ),

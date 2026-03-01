@@ -35,7 +35,7 @@ complete_initial_reports: _Final = _Quest(
     lambda ctx: ctx.state.asked_ai_for_help,
     [
         "AI: You got work to do,",
-        f"    which seems to be aproxim#tly {_hint.info('5 science')} reports",
+        f"    which seems to be aproximatly {_hint.info('5 science')} reports",
     ],
     lambda ctx: ctx.state.science >= 5,
     [
@@ -55,4 +55,30 @@ complete_initial_reports: _Final = _Quest(
         "    He is long over schedule... *bzZt*",
     ],
     post_event=lambda ctx: ctx.state.completed_initial_reports_for_ai.set(True),
+)
+
+give_seeds: _Final = _Quest(
+    lambda ctx: ctx.state.ready_to_get_seeds,
+    [
+        f"AI: Report status of the plants in the {_CompartmentName.HYDROPONICS_DOME}.",
+        ...,
+        "Me: It's now in good condtion for plants to grow.",
+        "AI: Because you violated your speciality,",
+        f"    and interfered with {_hint.clue("Gurkan's")} work,",
+        f"    I {_hint.weak('require')} that you hand over {_hint.info('10 science')} reports.",
+        f"    ({_hint.info('15 reports')} in total)",
+    ],
+    lambda ctx: ctx.state.science >= 15,
+    [
+        "AI: Good.",
+        f"    You have still been written up for a {_hint.bold('behaviour correction plan')},",
+        f"    which will take effect in {_hint.error('4xb28J')} days.",
+        ...,
+        f"    Here are your requested {_hint.info('seeds')}.",
+        ...,
+        _hint.weak("A small cabinet opens, and you take some seeds out of it"),
+        ...,
+        "Me: Thanks I guess...",
+    ],
+    post_event=lambda ctx: ctx.state.has_seeds.set(True),
 )
