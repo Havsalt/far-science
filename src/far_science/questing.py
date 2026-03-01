@@ -10,7 +10,6 @@ type Condition = Callable[[Context], AnyBool]
 type PostEvent = Callable[[Context], None]
 
 
-
 def instant(_: Context) -> Literal[True]:
     """Thin function for marking instant start/completion of quest.
 
