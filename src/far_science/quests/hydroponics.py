@@ -2,10 +2,8 @@ from typing import Final as _Final
 
 from .. import hint as _hint
 from ..questing import Quest as _Quest, instant as _instant
-from ..station import CompartmentName as _CompartmentName
 
 
-# TODO: Implement
 discover: _Final = _Quest(
     lambda ctx: ctx.compartment.is_discovered,
     [
