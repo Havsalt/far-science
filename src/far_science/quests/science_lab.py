@@ -11,6 +11,5 @@ discover: _Final = _Quest(
         "It was fun while it lasted...",
         ...,
         _hint.weak("Really miss doing some") + " " + _hint.info("science") + "...",
-        ...,
     ],
 )
