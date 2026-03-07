@@ -8,16 +8,6 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class HasHealth:
-    health: int
-
-
-@dataclass
-class HasDamage:
-    damage: int
-
-
-@dataclass
 class HasName[T = str]:
     name: T
 
