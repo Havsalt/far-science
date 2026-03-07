@@ -520,7 +520,6 @@ def refuse_fetching_soil(ctx: Context) -> Reason:
 @action(
     CompartmentName.CARGO_HOLD,
     lambda ctx: ctx.compartment.is_discovered
-    and ctx.player.action_points > 0
     and ctx.state.inspected_cargo_soil
     and not ctx.state.fetched_soil,
     "Take some soil, and stuff it in your pockets",
@@ -528,14 +527,18 @@ def refuse_fetching_soil(ctx: Context) -> Reason:
 )
 def take_some_soil(ctx: Context) -> None:
     ctx.state.fetched_soil = True
-    ctx.player.action_points -= 1
-    print_message(hint.weak("-1 action point"))
     print_message(
         "You take some soil in your pockets,",
         "and walk away with a smile",
         ...,
         "- and dirty clothes",
     )
+    if ctx.player.action_points > 0:
+        ctx.player.action_points -= 1
+        print_message(
+            hint.weak("-1 action point"),
+            hint.weak("... because hard work costs"),
+        )
 
 
 @action(  # Can be checked multiple times
