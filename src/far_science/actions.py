@@ -329,7 +329,7 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
         ...,
         f"Not that I have anything against {hint.clue('her')}",
         f"... but {hint.weak('she')} was the one that gave the order",
-        f"- and that's why {hint.weak('she')} should have been more prepared,"
+        f"- and that's why {hint.weak('she')} should have been more prepared,",
         "for the unkown we are about to discover...",
         ...,
         step_delta=1.5,
