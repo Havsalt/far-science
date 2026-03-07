@@ -51,7 +51,7 @@ complete_initial_reports: _Final = _Quest(
         ...,
         ...,
         f"AI: Check if {_hint.clue('Snidri')} is done with his {_hint.bacteria('project')}"
-        + f" in the {_hint.label(_CompartmentName.MEDICAL_BAY)}.",
+        + f" in the {_hint.info(_CompartmentName.MEDICAL_BAY)}.",
         "    He is long over schedule... *bzZt*",
     ],
     post_event=lambda ctx: ctx.state.completed_initial_reports_for_ai.set(True),

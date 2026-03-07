@@ -9,13 +9,19 @@ from ..station import CompartmentName as _CompartmentName
 turn_on_heater: _Final = _Quest(
     _instant,
     [
-        ...,
         f"It's soOoOoO {_hint.wet('cold')} *fht* *fht*",
         ...,
         "The backup power isn't enough on its own",
         "to keep the heater working properly.",
         ...,
         f"I should find my way to the {_hint.info(_CompartmentName.NUCLEAR_REACTOR)}.",
+        _hint.weak(
+            "There might be some answers around, to what happened to this place..."
+        ),
+        ...,
+        f"What will {_hint.weak('you')} do now?"
+        + " " * 15
+        + f"(type '{_hint.info('help')}' for list of actions)",
     ],
     lambda ctx: ctx.state.has_power,
     [

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import random
-from typing import assert_never
 
 from . import hint, science, bacteria
 from .station import CompartmentName
-from .dialogue import pause, print_message, TextLine, Reason
+from .dialogue import pause, print_message, TextLine, Message, Reason
 from .action_utils import action, always, anywhere, get_available_actions
 from .context import Context
 from .player import BONKS_UNTIL_HEAD_TRAUMA
@@ -16,7 +15,7 @@ from .state import WaterLevel
 def read_help(_: Context) -> None:
     print_message(
         "The map is divided into compartments in a linear space.",
-        f"You may encounter {hint.bold('walls')},"
+        f"You may encounter {hint.invalid('walls')},"
         + f" which {hint.bold('will hinder you from moving')} more in that direction.",
         ...,
         "When you want to know what you can do in the current compartment,",
@@ -59,7 +58,7 @@ def bonk_head(ctx: Context) -> Reason:
     if ctx.state.times_bonked_head >= BONKS_UNTIL_HEAD_TRAUMA:
         ctx.state.times_bonked_head = 0
         bonk_reason: list[TextLine] = [
-            f"You bonked your head against the {hint.error('wall')},",
+            f"You bonked your head against the {hint.invalid('wall')},",
             hint.weak("once again."),
         ]
         if ctx.state.science > 0:
@@ -74,14 +73,26 @@ def bonk_head(ctx: Context) -> Reason:
         return bonk_reason
 
     if random.randint(0, 1):
-        return f"A {hint.error('wall')} in your way. Nowhere to go..."
+        return f"A {hint.invalid('wall')} in your way. Nowhere to go..."
     elif random.randint(0, 3):
-        return f"That {hint.error('wall')} makes this a dead end..."
+        return f"That {hint.invalid('wall')} makes this a dead end..."
     else:
         return (
-            f"Can't go through {hint.error('walls')}...",
+            f"Can't go through {hint.invalid('walls')}...",
             hint.weak("... but sometimes I wish it was possible..."),
         )
+
+
+def hint_look_around() -> Message:
+    return [
+        hint.info("TIP")
+        + ": After moving into an "
+        + hint.bold("undiscovered")
+        + " compartment,",
+        f"     you can look around by typing {hint.info('i')}.",
+        f"     This may {hint.bold('unlock new actions')},",
+        f"     which can be viewed using {hint.info('wcid')}.",
+    ]
 
 
 @action(
@@ -96,6 +107,9 @@ def move_forward(ctx: Context) -> None:
     ctx.player.compartment = ctx.compartment.next_compartment
     if ctx.compartment.is_discovered:
         print_message("You walked into the " + hint.info(ctx.compartment.name))
+    elif not ctx.state.helped_discover_after_move:
+        ctx.state.helped_discover_after_move = True
+        print_message(hint_look_around())
 
 
 @action(
@@ -110,6 +124,9 @@ def move_backward(ctx: Context) -> None:
     ctx.player.compartment = ctx.compartment.prev_compartment
     if ctx.compartment.is_discovered:
         print_message("You walked back into the " + hint.info(ctx.compartment.name))
+    elif not ctx.state.helped_discover_after_move:
+        ctx.state.helped_discover_after_move = True
+        print_message(hint_look_around())
 
 
 @action(anywhere, always, alias=["cs"])
@@ -133,6 +150,10 @@ def check_action_points(ctx: Context) -> None:
     lambda ctx: ctx.compartment.is_discovered,
     "Get some rest",
     alias=["s"],
+    when_unavailable=(
+        lambda ctx: str(ctx.compartment.name)
+        + f" is {hint.invalid('no proper place')} to sleep."
+    ),
 )
 def sleep(ctx: Context) -> None:
     ctx.player.action_points = ctx.player.max_action_points
@@ -196,7 +217,7 @@ def sleep(ctx: Context) -> None:
                 "... but you are neither sad, nor happy",
                 "because plants have better things to do, than to worry.",
                 ...,
-                hint.error(
+                hint.death(
                     f"You found peace in being a plant onboard {hint.label(ctx.station.name)}"
                 ),
             )
@@ -213,11 +234,11 @@ def refuse_science(ctx: Context) -> Reason:
     if ctx.compartment.name is not CompartmentName.SCIENCE_LAB:
         return [
             ctx.compartment.name.article
-            + f" is no {hint.error('proper place')} for SCIENCE!"
+            + f" is no {hint.invalid('proper place')} for SCIENCE!"
         ]
     if ctx.player.action_points <= 0:
         return [
-            f"I'm too {hint.error('tired')} for science,"
+            f"I'm too {hint.invalid('tired')} for science,"
             + f" and could use some {hint.info('sleep')}",
         ]
 
@@ -261,7 +282,7 @@ def blow_up(_: Context) -> None:
         "Nope.",
         "You just experinced the inside of a uranium core...",
         ...,
-        hint.error("Scattered across the universe"),
+        hint.death("Scattered across the universe"),
         step_delta=1,
     )
     exit()
@@ -322,12 +343,14 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
         f"If no {hint.info('hostile bacteria is found, it will attack cardiac systems')}.",
         f"Poor {hint.bold('rat #42')} experienced {hint.info('abnormal increase in heart rythm')}.",
         "In addition, the "
-        + hint.info("blood veins coagulated to the point of rupture"),
+        + hint.info("blood veins coagulated to the point of rupture")
+        + ".",
         f"This resulted in the little thing {hint.info('bleeding out')}.",
         ...,
         hint.weak("That was a squeak I won't forget anytime soon..."),
         ...,
-        "- S".rjust(40),
+        "- S".rjust(60),
+        ...,
         step_delta=2,
     )
     pause(4)
@@ -352,12 +375,14 @@ def read_note_about_vaccine_prototype(ctx: Context) -> None:
 @action(
     CompartmentName.MEDICAL_BAY,
     lambda ctx: ctx.compartment.is_discovered
+    and not ctx.state.took_syringe
     and ctx.state.syringe is None
     and not ctx.state.learned_about_vaccine_prototype,  # Unknown
     "Pick up a syringe, with unknown content",
     alias=["pick", "up", "syringe"],
 )
 def pick_up_unknown_syringe(ctx: Context) -> None:
+    ctx.state.took_syringe = True
     ctx.state.syringe = bacteria.Syringe.UNKNOWN_CONTENT
     print_message(
         hint.weak("There is a syringe of unknown content on one of the desks."),
@@ -367,7 +392,7 @@ def pick_up_unknown_syringe(ctx: Context) -> None:
         ...,
         hint.weak("but it might kill me under the wrong conditions..."),
         ...,
-        hint.weak("- Maybe I can find out more a about it?"),
+        hint.bold("- Maybe I can find out more a about it?"),
     )
 
 
@@ -392,74 +417,77 @@ def pick_up_known_vaccine(ctx: Context) -> None:
 
 @action(
     anywhere,
-    lambda ctx: ctx.state.syringe is not None,
+    lambda ctx: ctx.state.syringe is bacteria.Syringe.UNKNOWN_CONTENT,
     "Inject syringe",
+    alias=["inject", "syringe"],
 )
-def inject_syringe(ctx: Context) -> None:
-    assert ctx.state.syringe is not None, (
-        "Injecting the syringe, requires having the syringe"
+def inject_unknown_syringe(ctx: Context) -> None:
+    print_message(
+        "Time to find out what this does...",
+        ...,
+        hint.weak("Injecting syringe"),
+        ...,
     )
-    match ctx.state.syringe:
-        case bacteria.Syringe.UNKNOWN_CONTENT:
-            print_message(
-                "Time to find out what this does...",
-                ...,
-                hint.weak("Injecting syringe"),
-            )
-            if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
-                print_message(
-                    "The world starts to spin.",
-                    "You look down on your hands, and see your blood begin to bubble.",
-                    ...,
-                    "Perhaps there was some crucial condition it required?",
-                    "... but that doesn't matter anymore...",
-                    "because you lie on the floor,",
-                    hint.error("dead") + " - somewhat like a black hole.",
-                )
-                exit()
-            else:
-                ctx.player.bacteria_stage.percent = max(
-                    0,
-                    ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
-                )
-                print_message(
-                    "I feel the blood rushing, like never before!",
-                    "Feels great.",
-                )
-        case bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE:
-            if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
-                print_message(
-                    "You either hoped to see your crew again,",
-                    "or perhaps this was just a moment of stupidity?",
-                    ...,
-                    hint.weak("Injecting syringe"),
-                    ...,
-                    f"Because there was {hint.info('no')} {hint.bacteria('bacteria')} {hint.info('to fight')},",
-                    "the contents caused increased heart rhythm,",
-                    "in conjunction with heavy coagulations.",
-                    ...,
-                    "This resulted in, as told, the blood vessels bursting.",
-                    "You now find yourself bleeding,",
-                    "without enough oxygen for the brain to function.",
-                    ...,
-                    f"You became a {hint.error('dead')} body, drifting through space,"
-                    "possibly a metaphor to the stars surfing the void",
-                    "of which is the universe...",
-                )
-                exit()
-            else:
-                ctx.player.bacteria_stage.percent = max(
-                    0,
-                    ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
-                )
-                print_message(
-                    f"This should give me some more time to stop the {hint.bacteria('bacteria')}",
-                    ...,
-                    hint.weak("Injecting syringe"),
-                    hint.weak(f"-{bacteria.SYRINGE_EFFECT}% bacteria"),
-                )
-        case _:
-            assert_never(ctx.state.syringe)
+    if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
+        print_message(
+            "The world starts to spin.",
+            "You look down on your hands, and see your blood begin to bubble.",
+            ...,
+            "Perhaps there was some crucial condition it required?",
+            "... but that doesn't matter anymore...",
+            "because you lie on the floor,",
+            hint.death("dead") + " - somewhat like a black hole.",
+        )
+        exit()
+    else:
+        ctx.player.bacteria_stage.percent = max(
+            0,
+            ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
+        )
+        print_message(
+            "I feel the blood rushing, like never before!",
+            "Feels great.",
+        )
+    ctx.state.syringe = None  # Remove syringe
+
+
+@action(
+    anywhere,
+    lambda ctx: ctx.state.syringe is bacteria.Syringe.KNOWN_VACCINE_PROTOTYPE,
+    "Inject vaccine",
+)
+def inject_vaccine(ctx: Context) -> None:
+    if ctx.player.bacteria_stage is bacteria.Stage.Dormant:
+        print_message(
+            "You either hoped to see your crew again,",
+            "or perhaps this was just a moment of stupidity?",
+            ...,
+            hint.weak("Injecting syringe"),
+            ...,
+            f"Because there was {hint.info('no')} {hint.bacteria('bacteria')} {hint.info('to fight')},",
+            "the contents caused increased heart rhythm,",
+            "in conjunction with heavy coagulations.",
+            ...,
+            "This resulted in, as told, the blood vessels bursting.",
+            "You now find yourself bleeding,",
+            "without enough oxygen for the brain to function.",
+            ...,
+            f"You became a {hint.death('dead')} body, drifting through space,"
+            "possibly a metaphor to the stars surfing the void",
+            "of which is the universe...",
+        )
+        exit()
+    else:
+        ctx.player.bacteria_stage.percent = max(
+            0,
+            ctx.player.bacteria_stage.percent - bacteria.SYRINGE_EFFECT,
+        )
+        print_message(
+            f"This should give me some more time to stop the {hint.bacteria('bacteria')}",
+            ...,
+            hint.weak("Injecting syringe"),
+            hint.weak(f"-{bacteria.SYRINGE_EFFECT}% bacteria"),
+        )
     ctx.state.syringe = None  # Remove syringe
 
 
@@ -492,6 +520,7 @@ def refuse_fetching_soil(ctx: Context) -> Reason:
 @action(
     CompartmentName.CARGO_HOLD,
     lambda ctx: ctx.compartment.is_discovered
+    and ctx.player.action_points > 0
     and ctx.state.inspected_cargo_soil
     and not ctx.state.fetched_soil,
     "Take some soil, and stuff it in your pockets",
@@ -516,7 +545,7 @@ def take_some_soil(ctx: Context) -> None:
     alias=["lcp"],
 )
 def check_dome_control_panel(ctx: Context) -> None:
-    water_hint = hint.ok if ctx.state.water_level.is_good else hint.error
+    water_hint = hint.ok if ctx.state.water_level.is_good else hint.bad
     power_info = "Power supply: " + (
         hint.ok("online") if ctx.state.has_power else hint.bad("offline")
     )
@@ -534,6 +563,7 @@ def check_dome_control_panel(ctx: Context) -> None:
         water_info,
         dirt_info,
         plant_info,
+        step_delta=0.3,
     )
     if (
         not ctx.state.checked_hydroponics_status
@@ -573,7 +603,9 @@ def refuse_sprinkling(ctx: Context) -> Reason:
 def turn_on_sprinkling_system(ctx: Context) -> None:
     ctx.state.water_level = WaterLevel.MOISTURE
     print_message(
-        hint.weak("You hear the sound of water sprinkled through the air."),
+        hint.weak(
+            f"You hear the sound of {hint.wet('water sprinkled')} through the air."
+        ),
         ...,
         f"This should help improve the watering {hint.info('over time')}.",
     )

@@ -53,13 +53,13 @@ def main():
         else:  # nobreak
             if action := get_action_by_name(segments):
                 if action.when_unavailable:
-                    reason = action.when_unavailable(ctx) or hint.error(
+                    reason = action.when_unavailable(ctx) or hint.invalid(
                         "Unavailable action"
                     )
                 else:
-                    reason = hint.error("Unavailable action")
+                    reason = hint.invalid("Unavailable action")
             else:
-                reason = hint.error("Invalid action")
+                reason = hint.invalid("Invalid action")
             print_message(reason)
             continue
 

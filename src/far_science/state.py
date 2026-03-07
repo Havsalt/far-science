@@ -46,6 +46,7 @@ class WaterLevel(Flag):
 # NOTE: Many of the bools will remain toggled, as they are a one-shot event
 @dataclass
 class StationState:
+    helped_discover_after_move: bool = False
     science: int = 0
     times_bonked_head: int = 0  # Accumulated from walking into walls
     has_power: bool = False
@@ -54,6 +55,7 @@ class StationState:
     inspected_cargo_soil: bool = False
     fetched_soil: bool = False
     syringe: bacteria.Syringe | None = None
+    took_syringe: bool = False  # To prevent picking up more syringes after use
     learned_about_vaccine_prototype: bool = False
     checked_hydroponics_status: bool = False
     water_level: WaterLevel = WaterLevel.DRY

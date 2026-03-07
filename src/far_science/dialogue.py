@@ -107,8 +107,5 @@ def print_start_message(ctx: Context) -> None:
         ...,
         ...,
         hint.wet("  O\n" + "/ | \\\n" + " / \\"),
-        f"What will {hint.weak('you')} do now?"
-        + " " * 20
-        + f"(type '{hint.info('help')}' for list of actions)",
         step_delta=1.5,
     )

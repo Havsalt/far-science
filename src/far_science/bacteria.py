@@ -10,7 +10,7 @@ type NonNegative = int
 
 
 _DAYS_UNTIL_DEATH: Final[NonNegative] = 9
-"""A rough estimate on how long it takes for the bacteria to kill"""
+"""A rough estimate on how long it takes for the bacteria to kill."""
 
 GROW_RATE: Final[Percent] = 100 // _DAYS_UNTIL_DEATH
 SYRINGE_EFFECT: Final[NonNegative] = 21
