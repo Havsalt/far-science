@@ -574,7 +574,7 @@ def check_dome_control_panel(ctx: Context) -> None:
         )
         if ctx.state.inspected_cargo_soil:
             print_message(
-                f"I can go back to the {CompartmentName.CARGO_HOLD},"
+                f"I can go back to the {CompartmentName.CARGO_HOLD},",
                 "to get some of that high quality soil.",
             )
 
