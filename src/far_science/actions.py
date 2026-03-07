@@ -252,11 +252,11 @@ def refuse_science(ctx: Context) -> Reason:
 )
 def do_science(ctx: Context) -> None:
     ctx.player.action_points -= 1
-    print_message(f"{hint.weak('-1 action point, +1 science')}")
     ctx.state.science += 1
     science_message = random.choice(science.MESSAGES)
     colored_science_message = hint.label(science_message)
     print_message(colored_science_message)
+    print_message(f"{hint.weak('-1 action point, +1 science')}")
 
 
 @action(
