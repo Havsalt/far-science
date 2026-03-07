@@ -1,22 +1,22 @@
-from dataclasses import dataclass
-from enum import Enum, auto
-from typing import Final, final
+from dataclasses import dataclass as _dataclass
+from enum import Enum as _Enum, auto as _auto
+from typing import Final as _Final, final as _final
 
-from .sentinel import Sentinel
-
-
-type Percent = int
-type NonNegative = int
+from .sentinel import Sentinel as _Sentinel
 
 
-_DAYS_UNTIL_DEATH: Final[NonNegative] = 9
+type _Percent = int
+type _NonNegative = int
+
+
+_DAYS_UNTIL_DEATH: _Final[_NonNegative] = 9
 """A rough estimate on how long it takes for the bacteria to kill."""
 
-GROW_RATE: Final[Percent] = 100 // _DAYS_UNTIL_DEATH
-SYRINGE_EFFECT: Final[NonNegative] = 21
+GROW_RATE: _Final[_Percent] = 100 // _DAYS_UNTIL_DEATH
+SYRINGE_EFFECT: _Final[_NonNegative] = 21
 
 
-@final
+@_final
 class Stage:
     """Tagged union.
 
@@ -25,15 +25,15 @@ class Stage:
         - `Growing`
     """
 
-    @final
-    class Dormant(metaclass=Sentinel): ...
+    @_final
+    class Dormant(metaclass=_Sentinel): ...
 
-    @final
-    @dataclass(kw_only=True)
+    @_final
+    @_dataclass(kw_only=True)
     class Growing:
         percent: int = 0
 
 
-class Syringe(Enum):
-    UNKNOWN_CONTENT = auto()
-    KNOWN_VACCINE_PROTOTYPE = auto()
+class Syringe(_Enum):
+    UNKNOWN_CONTENT = _auto()
+    KNOWN_VACCINE_PROTOTYPE = _auto()
