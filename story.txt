@@ -19,6 +19,7 @@ About SPROUT BACTERIA
 - Injected into ME, for containment?
 - Because of Doloris, somehow?
 - Frozen inside of ME, to stop it from growing - turing it dormant
+- Symbiosis with ME caused it to survive and mutate, so that the sample later can be studied and is correct
 
 About ME Character
 - Lonely as child
@@ -30,8 +31,18 @@ Crew:
 - ME: Science
 - Snidri: Medbay
 - Gurkan: Cargo + Hydroponics
-- Holtan: Reactor
-- Doloris: Commander (anywhere)
+- Holtan (full: Ken Holtan): Reactor
+- Doloris (full: ): Commander (anywhere)
+  * Selfish
+  * Strict
+  * "We are so close to a BACTERIA working, so keep it alive in a host"
+
+ABOUT COLD AND HEATING
+- Holtan was the reactor guy, so mention him in some note
+- For early game
+  * Push player to turn on REACTOR
+  * Kill if slept too many times when COLD
+  * Note after sleeping that it is colder
 
 MECHANICS ABOUT HYDROPONICS
 - This will be something to work on over the days
@@ -45,6 +56,26 @@ MECHANICS ABOUT HYDROPONICS
     + Holtan mention "He has power problems, so the plants are dying"
   * Food every day? - That keeps the bacteria grow less?
 
+MECHANICS ABOUT LANUCH_ARRAY
+- Has the actual launch pods
+- Collect the scanned FORMULA about BACTERIA into one of these pods
+  * This is done after scanning a sample of the plants grown in HYDROPONICS
+  * Send back home
+    + There should be a decision here
+- New control panel
+  * Hint to last patch version: April 2106
+  * Mission control logs
+  * Log into commanders profile on logs
+    + Get to know how Doloris ruled
+- Choose to share the knowledge with homeworld.
+- Find out about crew and leader (Doloris)
+  * Skeleton in one of the pods
+    + Snidri? Because of vaccine
 
-THE GOAL OF THE GAME:
+
+THE GOAL OF THE GAME
 - Survive long enough to send the BACTERIA back to earth in a pod.
+
+
+TODO
+- Use scrambled speach, maybe to mess up the printing

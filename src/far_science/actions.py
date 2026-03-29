@@ -2,11 +2,18 @@ from __future__ import annotations
 
 import random
 
-from . import hint, science, bacteria
+from . import hint, science, bacteria, terminal
 from .station import CompartmentName
-from .dialogue import pause, print_message, TextLine, Message, Reason
-from .action_utils import action, always, anywhere, get_available_actions
-from .context import Context
+from .dialogue import (
+    pause,
+    print_message,
+    get_input_segments,
+    TextLine,
+    Message,
+    Reason,
+)
+from .action_utils import action, anywhere, get_available_actions
+from .context import Context, always
 from .player import BONKS_UNTIL_HEAD_TRAUMA
 from .state import WaterLevel
 
@@ -35,6 +42,7 @@ def read_help(_: Context) -> None:
 @action(anywhere, always, "Think about what I can do", alias=["wcid"])
 def what_can_i_do(ctx: Context) -> None:
     for action in get_available_actions(ctx):
+        # TODO: Remove condition check, as it is done in `get_available_actions`
         if action.condition_met(ctx):
             print(
                 f"{hint.info(action.description)}:\n- {hint.label(' '.join(action.name_segments))}"
@@ -626,3 +634,39 @@ def plant_seeds(ctx: Context) -> None:
         hint.weak("You planted some seeds."),
         "The new plants should thrive under these top notch conditons.",
     )
+
+
+# TODO: Add guide note about terminal
+@action(
+    # CompartmentName.LAUNCH_ARRAY,
+    CompartmentName.SLEEP_POD,  # DEV
+    # lambda ctx: ctx.state.has_power,
+    always,  # DEV
+    "Open a new terminal session, at the launch control panel",
+    alias=["term"],
+)
+def enter_terminal_session(ctx: Context) -> None:
+    print_message(
+        hint.label("== TermOS 1.16.7-rc2 =="),
+        "# ver: ubuntu-106.04",
+        "# type " + hint.info("compgen -c") + " for a list of available commands",
+        step_delta=0.3,
+    )
+    while True:
+        match terminal.get_choice():
+            case terminal.Choice.VIEW_COMMANDS:
+                message: Message = []
+                for choice in terminal.Choice:
+                    condition = terminal.CHOICE_CONDITIONS.get(choice, always)
+                    if not condition(ctx):
+                        continue
+                    message.append("> " + hint.info(choice.value))
+                print_message(message, step_delta=0.3)
+            case terminal.Choice.CHANGE_USER_PROFILE:  # Commander's eyes only - Hacking
+                raise NotImplementedError
+            case terminal.Choice.OPEN_MISSION_LOGS:
+                terminal.read_mission_logs(ctx)
+            case terminal.Choice.LAUNCH_POD:
+                raise NotImplementedError
+            case terminal.Choice.EXIT:
+                return  # Exit terminal session

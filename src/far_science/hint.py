@@ -22,7 +22,7 @@ class _Hint:
 clue = _Hint(35)  # Lore related
 weak = _Hint(3)
 bold = _Hint(1)
-label = _Hint(33)
+label = pending = _Hint(33)
 wet = _Hint(34)
 ok = bacteria = _Hint(32)
 info = _Hint(36)

@@ -1,6 +1,6 @@
 from . import (
     hint,
-    actions as _,  # NOTE: Needed to load actions
+    actions as _,  # noqa: F401  # NOTE: Needed to load actions
 )
 from .action_utils import get_available_actions, get_action_by_name
 from .dialogue import print_start_message, print_message, get_input_segments, pause
@@ -45,12 +45,13 @@ def main():
                 continue  # May trigger new quest
 
         # Perform a valid action
-        segments = get_input_segments()
+        segments = get_input_segments("Action: ")
         for action in get_available_actions(ctx):
             if segments == action.name_segments:
                 action.perform(ctx)
                 break
         else:  # nobreak
+            # Check if there is a reason for not being able to perform wanted action
             if action := get_action_by_name(segments):
                 if action.when_unavailable:
                     reason = action.when_unavailable(ctx) or hint.invalid(

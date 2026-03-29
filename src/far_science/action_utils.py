@@ -2,19 +2,17 @@ from __future__ import annotations
 
 from functools import wraps
 from dataclasses import dataclass
-from typing import Callable, Generator, Literal, Final, final
+from typing import Callable, Generator, Final, final
 
 from .station import CompartmentName
-from .context import Context
+from .context import Context, Condition
 from .sentinel import Sentinel
-from .dialogue import Reason, ActionNameSegments
-from .bool_state import AnyBool
+from .dialogue import Reason, InputSegments
 
 type ActionClassName = str
 # Individual actions are defined as public methods
 type Action = Callable[[Context], None]
 type UnavailableAction = Callable[[Context], Reason]
-type Condition = Callable[[Context], AnyBool]
 type Place = type[anywhere] | CompartmentName
 
 
@@ -22,7 +20,7 @@ type Place = type[anywhere] | CompartmentName
 class ConditionalAction:
     perform: Action
     condition_met: Condition
-    name_segments: ActionNameSegments
+    name_segments: InputSegments
     description: str
     when_unavailable: UnavailableAction | None = None
 
@@ -36,10 +34,6 @@ Contains all available actions, associated with each compartment.
 
 @final
 class anywhere(metaclass=Sentinel): ...
-
-
-def always(_: Context) -> Literal[True]:
-    return True
 
 
 def action(
@@ -82,7 +76,7 @@ def action(
 
 
 def get_action_by_name(
-    name_segments: ActionNameSegments,
+    name_segments: InputSegments,
     /,
 ) -> ConditionalAction | None:
     for action in get_all_actions():

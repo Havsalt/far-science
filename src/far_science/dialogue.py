@@ -17,7 +17,7 @@ type Percent = int
 type TextLine = str | EllipsisType
 type Message = Sequence[TextLine]
 type Reason = TextLine | Message | None
-type ActionNameSegments = list[str]
+type InputSegments = list[str]
 
 
 TEXT_LINE_TYPES: Final = (str, EllipsisType)
@@ -82,9 +82,10 @@ def print_message(
             pause(step_delta)
 
 
-def get_input_segments() -> ActionNameSegments:  # NOTE: Might not match
+# NOTE: Might not be a valid action match
+def get_input_segments(prompt: str, /) -> InputSegments:
     return (
-        input("Action: ")
+        input(prompt)
         .strip()
         .replace("  ", " ")
         .replace("  ", " ")  # Perform twice to actually remove *all* double whitespace

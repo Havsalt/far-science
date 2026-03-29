@@ -1,12 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Literal
+
+from .bool_state import AnyBool
 
 if TYPE_CHECKING:
     from .world_gen import World
     from .player import Player
     from .station import Compartment, SpaceStation, StationState
+
+
+type Condition = Callable[[Context], AnyBool]
+
+
+def always(_: Context) -> Literal[True]:
+    return True
 
 
 @dataclass(frozen=True)

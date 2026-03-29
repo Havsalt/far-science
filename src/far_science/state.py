@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Flag, auto
 from dataclasses import dataclass
 
-from . import bacteria
+from . import bacteria, terminal
 from .bool_state import Bool
 
 
@@ -43,12 +43,12 @@ class WaterLevel(Flag):
 
 
 # This is just where is dump all shared quest states, regarding the station
-# NOTE: Many of the bools will remain toggled, as they are a one-shot event
+# NOTE: Many of the bools will remain toggled, as they are a one-shot events
 @dataclass
 class StationState:
     helped_discover_after_move: bool = False
     science: int = 0
-    times_bonked_head: int = 0  # Accumulated from walking into walls
+    times_bonked_head: int = 0  # Accumulated from walking/bonking into walls
     has_power: bool = False
     asked_ai_for_help: bool = False
     completed_initial_reports_for_ai: Bool = Bool(False)
@@ -63,6 +63,8 @@ class StationState:
     ready_to_get_seeds: Bool = Bool(False)
     has_seeds: Bool = Bool(False)
     planted_seeds = False
+    staged_launch: bool = False
+    terminal_user: terminal.Username = terminal.Username.HOLTAN
 
     @property
     def plant_conditions_are_good(self) -> bool:

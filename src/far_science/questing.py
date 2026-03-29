@@ -5,8 +5,8 @@ from typing import Callable, Literal
 from .dialogue import Message
 from .context import Context
 from .bool_state import AnyBool
+from .context import Condition
 
-type Condition = Callable[[Context], AnyBool]
 type PostEvent = Callable[[Context], None]
 
 
